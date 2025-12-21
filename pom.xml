@@ -74,6 +74,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
 		<!-- JWT for auth tokens -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -91,6 +92,11 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 			<scope>runtime</scope>
+=======
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+>>>>>>> 4c4e70928857419ab647da14fa503a779d168d85
 		</dependency>
 	</dependencies>
 
