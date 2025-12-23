@@ -2,7 +2,7 @@ package com.alura.hackatonAlura.domain.usuario;
 
 public record UserResponse(
         Long id,
-        String nombre,
+        String fullName,
         String email,
         Status status,
         Role role) {
