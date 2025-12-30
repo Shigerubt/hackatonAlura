@@ -75,7 +75,7 @@ Nota: esta sección define el contrato deseado; la validación será incorporada
 
 ## Configuración
 - `src/main/resources/application.properties`:
-  - `churn.ds.url` → URL del servicio DS (ej. `http://localhost:8000/predict`). Si está vacío, se usa un heurístico local.
+  - `churn.ds.url` → URL del servicio DS (ej. `http://localhost:8000/predict`).
   - Persistencia: se guardan predicciones en tabla `predictions` (H2 por defecto).
 
 ## Ejecución
@@ -126,7 +126,7 @@ Invoke-RestMethod -Method GET -Uri http://localhost:8080/api/churn/stats -Header
 
 ## Docker Compose (API + DS)
 ```powershell
-cd "c:\Users\hugow\Hackaton Alura\hackatonAlura"
+cd "c:\Users\hugow\Hackaton (entorno local) Alura\hackatonAlura"
 docker compose up --build
 ```
 - La API quedará en `http://localhost:8080`, el DS en `http://localhost:8000`.
