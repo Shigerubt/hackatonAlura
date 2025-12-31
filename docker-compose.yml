@@ -4,6 +4,10 @@ services:
     build: ./ds-service
     ports:
       - "8000:8000"
+    environment:
+      - CHURN_MODEL_DIR=/models
+    volumes:
+      - ./models:/models:ro
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket,sys;s=socket.socket();s.settimeout(1);s.connect(('127.0.0.1',8000));s.close();sys.exit(0)\""]
       interval: 10s
@@ -14,8 +18,8 @@ services:
     build: .
     ports:
       - "8080:8080"
-    environment:
-      - CHURN_DS_URL=http://ds:8000/predict
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "sh -c \"ps -ef | grep /app/app.jar | grep -v grep >/dev/null\""]
       interval: 10s

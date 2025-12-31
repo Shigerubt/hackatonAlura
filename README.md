@@ -35,7 +35,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
   - Salida igual al batch JSON.
   - Ejemplo listo para usar: `samples/churn_batch_sample.csv`
 
-## Validación de entrada (pendiente de implementación)
+## Validación de entrada
 - Campos requeridos para `/api/churn/predict`:
   - `tiempo_contrato_meses`: entero ≥ 0
   - `retrasos_pago`: entero ≥ 0
@@ -51,7 +51,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
       }
     }
     ```
-Nota: esta sección define el contrato deseado; la validación será incorporada en el código en próximos pasos.
+Nota: la validación ya está implementada en la API (ver pruebas en `target/surefire-reports`).
 
 ## Ejemplos de petición y respuesta
 - Postman: importar y usar [postman/ChurnInsight.postman_collection.json](postman/ChurnInsight.postman_collection.json).
@@ -74,9 +74,12 @@ Nota: esta sección define el contrato deseado; la validación será incorporada
   ```
 
 ## Configuración
-- `src/main/resources/application.properties`:
-  - `churn.ds.url` → URL del servicio DS (ej. `http://localhost:8000/predict`). Si está vacío, se usa un heurístico local.
-  - Persistencia: se guardan predicciones en tabla `predictions` (H2 por defecto).
+- Entorno (`.env`) y propiedades (`src/main/resources/application.properties`):
+  - `CHURN_DS_URL` → URL del servicio DS (ej. `http://localhost:8000/predict`). Si está vacío, la API usa heurístico local.
+  - `JWT_SECRET` → secreto para firmar tokens JWT.
+  - `JWT_EXPIRATION_MINUTES` → minutos de validez del JWT.
+  - `ADMIN_INITIAL_EMAIL` / `ADMIN_INITIAL_PASSWORD` / `ADMIN_INITIAL_FULL_NAME` → usuario admin inicial (solo dev).
+  - Persistencia: H2 (memoria) por defecto.
 
 ## Ejecución
 ```powershell
@@ -116,7 +119,7 @@ Invoke-RestMethod -Method GET -Uri http://localhost:8080/api/churn/stats -Header
       }
     }
     ```
-  - Salida:
+  - Salida (heurístico o modelo entrenado):
     ```json
     { "prevision": "Va a cancelar", "probabilidad": 0.81, "top_features": ["retrasos_pago","plan","tiempo_contrato_meses"] }
     ```
@@ -130,8 +133,13 @@ cd "c:\Users\hugow\Hackaton Alura\hackatonAlura"
 docker compose up --build
 ```
 - La API quedará en `http://localhost:8080`, el DS en `http://localhost:8000`.
-- La variable `CHURN_DS_URL` conecta automáticamente la API con el DS.
- - Healthchecks: `ds` y `dashboard` verifican sus puertos; `api` verifica el proceso de la app. El arranque del `dashboard` espera a que `api` esté saludable.
+- La API usa `.env` para `CHURN_DS_URL`, `JWT_SECRET`, etc.
+- Para cargar un modelo entrenado, coloca los artefactos en `models/` (montado en `/models` del contenedor `ds`) y opcionalmente define `CHURN_MODEL_DIR=/models`.
+- Healthchecks: `ds` y `dashboard` verifican sus puertos; `api` verifica el proceso de la app. El arranque del `dashboard` espera a que `api` esté saludable.
+
+## Documentación de API
+- Swagger UI (si `springdoc` está habilitado): `http://localhost:8080/swagger-ui/index.html`
+- Health (Actuator): `http://localhost:8080/actuator/health`
 
 ## Postman Collection
 - Importa `postman/ChurnInsight.postman_collection.json` y ejecuta los ejemplos incluidos.
