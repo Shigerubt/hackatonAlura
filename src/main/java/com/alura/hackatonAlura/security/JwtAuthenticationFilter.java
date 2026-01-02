@@ -34,10 +34,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain)
             throws ServletException, IOException {
+
         String uri = request.getRequestURI();
         String raw = request.getHeader("Authorization");
+
         if (raw == null) {
             log.debug("No Authorization header for {}", uri);
         }
@@ -46,16 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Claims claims = jwtUtil.parseToken(token);
                 String username = claims.getSubject();
-
-                String rolesClaim = claims.get("roles", String.class);
-                if (rolesClaim == null || rolesClaim.isBlank()) {
-                    String singleRole = claims.get("rol", String.class);
-                    rolesClaim = (singleRole == null || singleRole.isBlank()) ? "USER" : singleRole;
-                }
-
-                List<SimpleGrantedAuthority> authorities = Arrays.stream(rolesClaim.split(","))
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
+                String roles = claims.get("roles", String.class);
+                List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
                         .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
@@ -63,14 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.debug("JWT ok for {} (sub={}, roles={})", uri, username, rolesClaim);
-            } catch (ExpiredJwtException e) {
-                request.setAttribute("jwt_error", "expired");
-                log.warn("JWT expired for {}: {}", uri, e.getMessage());
-                SecurityContextHolder.clearContext();
-            } catch (JwtException | IllegalArgumentException e) {
-                request.setAttribute("jwt_error", "invalid");
-                log.warn("JWT invalid for {}: {}", uri, e.getMessage());
+            } catch (Exception ignored) {
                 SecurityContextHolder.clearContext();
             }
         }
@@ -89,5 +78,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return header.substring(7).trim();
         }
         return header.trim();
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui");
     }
 }
