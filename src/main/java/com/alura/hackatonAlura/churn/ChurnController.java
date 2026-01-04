@@ -28,8 +28,9 @@ public class ChurnController {
 
     @PostMapping(path = "/predict", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ChurnPredictionResponse predict(@Valid @RequestBody ChurnRequest request) {
-        log.info("/predict recibido: retrasos={}, tiempoMeses={}, uso=...",
-                request.getRetrasosPago(), request.getTiempoContratoMeses());
+        // Log básico con campos clave
+        log.info("/predict recibido: tenure={}, MonthlyCharges={}, TotalCharges={}",
+                request.getTenure(), request.getMonthlyCharges(), request.getTotalCharges());
         return churnService.predict(request);
     }
 
@@ -64,9 +65,37 @@ public class ChurnController {
     private ChurnRequest toRequest(CSVRecord r) {
         try {
             ChurnRequest c = new ChurnRequest();
-            c.setTiempoContratoMeses(Integer.parseInt(r.get("tiempo_contrato_meses")));
-            c.setRetrasosPago(Integer.parseInt(r.get("retrasos_pago")));
-            c.setUsoMensual(Double.parseDouble(r.get("uso_mensual")));
+            // Strings (case-sensitive)
+            c.setGender(r.get("gender"));
+            c.setPartner(r.get("Partner"));
+            c.setDependents(r.get("Dependents"));
+            c.setPhoneService(r.get("PhoneService"));
+            c.setMultipleLines(r.get("MultipleLines"));
+            c.setInternetService(r.get("InternetService"));
+            c.setOnlineSecurity(r.get("OnlineSecurity"));
+            c.setOnlineBackup(r.get("OnlineBackup"));
+            c.setDeviceProtection(r.get("DeviceProtection"));
+            c.setTechSupport(r.get("TechSupport"));
+            c.setStreamingTV(r.get("StreamingTV"));
+            c.setStreamingMovies(r.get("StreamingMovies"));
+            c.setContract(r.get("Contract"));
+            c.setPaperlessBilling(r.get("PaperlessBilling"));
+            c.setPaymentMethod(r.get("PaymentMethod"));
+
+            // Integer 0/1 for SeniorCitizen
+            c.setSeniorCitizen(Integer.parseInt(r.get("SeniorCitizen")));
+            // Tenure
+            c.setTenure(Integer.parseInt(r.get("tenure")));
+
+            // Numeric: MonthlyCharges
+            c.setMonthlyCharges(Double.parseDouble(r.get("MonthlyCharges")));
+            // Numeric: TotalCharges (option A: blank/null -> 0.0)
+            String tc = r.get("TotalCharges");
+            if (tc == null || tc.isBlank()) {
+                c.setTotalCharges(0.0);
+            } else {
+                c.setTotalCharges(Double.parseDouble(tc));
+            }
             return c;
         } catch (Exception ex) {
             String msg = "CSV fila " + r.getRecordNumber() + ": " + ex.getMessage();
