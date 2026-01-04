@@ -76,27 +76,26 @@ public class ChurnService {
 
     private ChurnPredictionResponse callDsService(ChurnRequest req) {
         // Contract: send nested features with canonical 20 variables
-        Map<String, Object> features = Map.of(
-                "gender", req.getGender(),
-                "SeniorCitizen", req.getSeniorCitizen(),
-                "Partner", req.getPartner(),
-                "Dependents", req.getDependents(),
-                "tenure", req.getTenure(),
-                "PhoneService", req.getPhoneService(),
-                "MultipleLines", req.getMultipleLines(),
-                "InternetService", req.getInternetService(),
-                "OnlineSecurity", req.getOnlineSecurity(),
-                "OnlineBackup", req.getOnlineBackup(),
-                "DeviceProtection", req.getDeviceProtection(),
-                "TechSupport", req.getTechSupport(),
-                "StreamingTV", req.getStreamingTV(),
-                "StreamingMovies", req.getStreamingMovies(),
-                "Contract", req.getContract(),
-                "PaperlessBilling", req.getPaperlessBilling(),
-                "PaymentMethod", req.getPaymentMethod(),
-                "MonthlyCharges", req.getMonthlyCharges(),
-                "TotalCharges", req.getTotalCharges() == null ? 0.0 : req.getTotalCharges()
-        );
+        java.util.Map<String, Object> features = new java.util.HashMap<>();
+        features.put("gender", req.getGender());
+        features.put("SeniorCitizen", req.getSeniorCitizen());
+        features.put("Partner", req.getPartner());
+        features.put("Dependents", req.getDependents());
+        features.put("tenure", req.getTenure());
+        features.put("PhoneService", req.getPhoneService());
+        features.put("MultipleLines", req.getMultipleLines());
+        features.put("InternetService", req.getInternetService());
+        features.put("OnlineSecurity", req.getOnlineSecurity());
+        features.put("OnlineBackup", req.getOnlineBackup());
+        features.put("DeviceProtection", req.getDeviceProtection());
+        features.put("TechSupport", req.getTechSupport());
+        features.put("StreamingTV", req.getStreamingTV());
+        features.put("StreamingMovies", req.getStreamingMovies());
+        features.put("Contract", req.getContract());
+        features.put("PaperlessBilling", req.getPaperlessBilling());
+        features.put("PaymentMethod", req.getPaymentMethod());
+        features.put("MonthlyCharges", req.getMonthlyCharges());
+        features.put("TotalCharges", req.getTotalCharges() == null ? 0.0 : req.getTotalCharges());
         Map<String, Object> payload = Map.of("features", features);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

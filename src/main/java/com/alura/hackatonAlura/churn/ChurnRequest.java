@@ -95,7 +95,7 @@ public class ChurnRequest {
 
     @JsonProperty("PaymentMethod")
     @NotNull
-    @Pattern(regexp = "Electronic check|Mailed check|Bank transfer \(automatic\)|Credit card \(automatic\)", message = "PaymentMethod valores exactos requeridos")
+    @Pattern(regexp = "Electronic check|Mailed check|Bank transfer \\(automatic\\)|Credit card \\(automatic\\)", message = "PaymentMethod valores exactos requeridos")
     private String paymentMethod;
 
     @JsonProperty("MonthlyCharges")
