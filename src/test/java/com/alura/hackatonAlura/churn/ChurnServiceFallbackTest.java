@@ -27,7 +27,6 @@ public class ChurnServiceFallbackTest {
         req.setTiempoContratoMeses(12);
         req.setRetrasosPago(2);
         req.setUsoMensual(14.5);
-        req.setPlan("Premium");
 
         ChurnPredictionResponse res = service.predict(req);
 

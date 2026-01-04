@@ -11,8 +11,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
     {
       "tiempo_contrato_meses": 12,
       "retrasos_pago": 2,
-      "uso_mensual": 14.5,
-      "plan": "Premium"
+      "uso_mensual": 14.5
     }
     ```
   - Salida:
@@ -34,7 +33,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
 
 - POST `/api/churn/predict/batch/csv` (multipart/form-data)
   - Protegido: requiere `Authorization: Bearer <token>`
-  - Subir archivo CSV con encabezados: `tiempo_contrato_meses,retrasos_pago,uso_mensual,plan`
+  - Subir archivo CSV con encabezados: `tiempo_contrato_meses,retrasos_pago,uso_mensual`
   - Salida igual al batch JSON.
   - Ejemplo listo para usar: `samples/churn_batch_sample.csv`
 
@@ -43,7 +42,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
   - `tiempo_contrato_meses`: entero ≥ 0
   - `retrasos_pago`: entero ≥ 0
   - `uso_mensual`: número ≥ 0
-  - `plan`: string entre {"Basic","Standard","Premium"} (no sensible a mayúsculas/minúsculas)
+  
 - Respuestas esperadas en caso de error:
   - HTTP 400 con detalle por campo, por ejemplo:
     ```json
@@ -66,8 +65,7 @@ Nota: la validación ya está implementada en la API (ver pruebas en `target/sur
     -d '{
       "tiempo_contrato_meses": 12,
       "retrasos_pago": 2,
-      "uso_mensual": 14.5,
-      "plan": "Premium"
+      "uso_mensual": 14.5
     }'
   ```
 - cURL (batch CSV):
@@ -125,14 +123,13 @@ Invoke-RestMethod -Method GET -Uri http://localhost:8080/api/churn/stats -Header
       "features": {
         "tiempo_contrato_meses": 12,
         "retrasos_pago": 2,
-        "uso_mensual": 14.5,
-        "plan": "Premium"
+        "uso_mensual": 14.5
       }
     }
     ```
   - Salida (heurístico o modelo entrenado):
     ```json
-    { "prevision": "Va a cancelar", "probabilidad": 0.81, "top_features": ["retrasos_pago","plan","tiempo_contrato_meses"] }
+    { "prevision": "Va a cancelar", "probabilidad": 0.81, "top_features": ["retrasos_pago","tiempo_contrato_meses","uso_mensual"] }
     ```
 
 ## Notebook (Data Science)
@@ -165,11 +162,10 @@ docker compose up --build
 - Build: Maven Wrapper (`mvnw`/`mvnw.cmd`)
 
 ## Explicación del modelo (DS actual)
-El microservicio DS implementa un puntaje heurístico que aproxima una función logística sobre cuatro señales:
+El microservicio DS implementa un puntaje heurístico que aproxima una función logística sobre tres señales:
 - `retrasos_pago` (aumenta el riesgo)
 - `tiempo_contrato_meses` (disminuye el riesgo con antigüedad)
 - `uso_mensual` (mayor uso disminuye el riesgo)
-- `plan` (riesgo base según tipo de plan)
 
 Se calcula un puntaje lineal y se transforma en probabilidad con la función sigmoide. Además, se retornan `top_features` como las tres variables con mayor contribución absoluta al resultado. Cuando esté disponible un modelo entrenado (joblib/pickle), el microservicio puede cargarlo para reemplazar la heurística sin cambiar el contrato de integración.
 

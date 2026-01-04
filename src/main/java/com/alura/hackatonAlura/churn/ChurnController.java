@@ -28,8 +28,8 @@ public class ChurnController {
 
     @PostMapping(path = "/predict", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ChurnPredictionResponse predict(@Valid @RequestBody ChurnRequest request) {
-        log.info("/predict recibido: plan={}, retrasos={}, tiempoMeses={}, uso=...",
-                request.getPlan(), request.getRetrasosPago(), request.getTiempoContratoMeses());
+        log.info("/predict recibido: retrasos={}, tiempoMeses={}, uso=...",
+                request.getRetrasosPago(), request.getTiempoContratoMeses());
         return churnService.predict(request);
     }
 
@@ -67,7 +67,6 @@ public class ChurnController {
             c.setTiempoContratoMeses(Integer.parseInt(r.get("tiempo_contrato_meses")));
             c.setRetrasosPago(Integer.parseInt(r.get("retrasos_pago")));
             c.setUsoMensual(Double.parseDouble(r.get("uso_mensual")));
-            c.setPlan(r.get("plan"));
             return c;
         } catch (Exception ex) {
             String msg = "CSV fila " + r.getRecordNumber() + ": " + ex.getMessage();

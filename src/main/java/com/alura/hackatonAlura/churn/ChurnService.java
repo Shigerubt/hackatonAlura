@@ -58,7 +58,6 @@ public class ChurnService {
         p.setTiempoContratoMeses(req.getTiempoContratoMeses());
         p.setRetrasosPago(req.getRetrasosPago());
         p.setUsoMensual(req.getUsoMensual());
-        p.setPlan(req.getPlan());
         p.setSource(res.getTopFeatures() != null ? (dsUrl.isEmpty() ? "heuristic" : "DS") : (dsUrl.isEmpty() ? "heuristic" : "DS"));
         predictionRepository.save(p);
         log.info("Predicción: label={}, prob={}, source={}", res.getPrevision(), String.format("%.3f", res.getProbabilidad()), p.getSource());
@@ -77,12 +76,11 @@ public class ChurnService {
     private ChurnPredictionResponse callDsService(ChurnRequest req) {
         // Contract: send nested features object for flexibility
         Map<String, Object> payload = Map.of(
-                "features", Map.of(
-                        "tiempo_contrato_meses", req.getTiempoContratoMeses(),
-                        "retrasos_pago", req.getRetrasosPago(),
-                        "uso_mensual", req.getUsoMensual(),
-                        "plan", req.getPlan()
-                )
+            "features", Map.of(
+                "tiempo_contrato_meses", req.getTiempoContratoMeses(),
+                "retrasos_pago", req.getRetrasosPago(),
+                "uso_mensual", req.getUsoMensual()
+            )
         );
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -100,7 +98,7 @@ public class ChurnService {
             top = ((List<?>) tf).stream().filter(x -> x instanceof String).map(x -> (String) x).limit(3).toList();
         }
         if (top == null || top.isEmpty()) {
-            top = List.of("plan","retrasos_pago","tiempo_contrato_meses");
+            top = List.of("retrasos_pago","tiempo_contrato_meses","uso_mensual");
         }
         return new ChurnPredictionResponse((String) prev,
                 ((Number) prob).doubleValue(), top, Instant.now());
@@ -108,17 +106,10 @@ public class ChurnService {
 
     private ChurnPredictionResponse heuristicFallback(ChurnRequest req) {
         // Simple logistic-like heuristic for MVP
-        double planRisk = switch (req.getPlan().toLowerCase()) {
-            case "basic" -> 0.15;
-            case "standard" -> 0.10;
-            case "premium" -> 0.05;
-            default -> 0.12; // unknown
-        };
         double cRetrasos = 0.08 * req.getRetrasosPago();
         double cTiempo = -0.03 * req.getTiempoContratoMeses();
         double cUso = -0.02 * req.getUsoMensual();
-        double cPlan = planRisk;
-        double z = -1.0 + cRetrasos + cTiempo + cUso + cPlan;
+        double z = -1.0 + cRetrasos + cTiempo + cUso;
         double p = 1.0 / (1.0 + Math.exp(-z));
         String label = p >= 0.5 ? "Va a cancelar" : "Va a continuar";
         // Explainability: order by absolute contribution
@@ -126,7 +117,6 @@ public class ChurnService {
         contrib.put("retrasos_pago", Math.abs(cRetrasos));
         contrib.put("tiempo_contrato_meses", Math.abs(cTiempo));
         contrib.put("uso_mensual", Math.abs(cUso));
-        contrib.put("plan", Math.abs(cPlan));
         List<String> top = contrib.entrySet().stream()
             .sorted((a,b) -> Double.compare(b.getValue(), a.getValue()))
             .map(Map.Entry::getKey)

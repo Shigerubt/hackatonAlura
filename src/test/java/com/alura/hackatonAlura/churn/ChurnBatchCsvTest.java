@@ -31,15 +31,15 @@ class ChurnBatchCsvTest {
 
     @Test
     void uploadValidCsvReturnsAggregates() throws Exception {
-        String csv = "tiempo_contrato_meses,retrasos_pago,uso_mensual,plan\n" +
-                "12,2,14.5,Premium\n" +
-                "6,0,8.0,Basic\n";
+        String csv = "tiempo_contrato_meses,retrasos_pago,uso_mensual\n" +
+                "12,2,14.5\n" +
+                "6,0,8.0\n";
         MockMultipartFile file = new MockMultipartFile(
                 "file", "sample.csv", "text/csv", csv.getBytes()
         );
 
         given(churnService.predict(any(ChurnRequest.class)))
-                .willReturn(new ChurnPredictionResponse("Va a cancelar", 0.76, java.util.List.of("retrasos_pago","plan","tiempo_contrato_meses"), java.time.Instant.now()));
+                .willReturn(new ChurnPredictionResponse("Va a cancelar", 0.76, java.util.List.of("retrasos_pago","tiempo_contrato_meses","uso_mensual"), java.time.Instant.now()));
 
         mockMvc.perform(multipart("/api/churn/predict/batch/csv")
                         .file(file)
@@ -52,8 +52,8 @@ class ChurnBatchCsvTest {
 
     @Test
     void uploadInvalidCsvReturns400() throws Exception {
-        String badCsv = "tiempo_contrato_meses,retrasos_pago,uso_mensual,plan\n" +
-                "x,2,14.5,Premium\n"; // invalid integer
+        String badCsv = "tiempo_contrato_meses,retrasos_pago,uso_mensual\n" +
+                "x,2,14.5\n"; // invalid integer
         MockMultipartFile file = new MockMultipartFile(
                 "file", "bad.csv", "text/csv", badCsv.getBytes()
         );

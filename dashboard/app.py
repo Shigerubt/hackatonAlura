@@ -86,7 +86,6 @@ with tab_individual:
             retrasos_pago = st.number_input("Retrasos de pago", min_value=0, step=1, value=2)
         with col2:
             uso_mensual = st.number_input("Uso mensual", min_value=0.0, step=0.1, value=14.5)
-            plan = st.selectbox("Plan", options=["Basic", "Standard", "Premium"], index=2)
 
         submitted = st.form_submit_button("Predecir")
 
@@ -95,7 +94,6 @@ with tab_individual:
             "tiempo_contrato_meses": int(tiempo_contrato_meses),
             "retrasos_pago": int(retrasos_pago),
             "uso_mensual": float(uso_mensual),
-            "plan": plan,
         }
 
         resp = call_predict(api_url, payload, token)
@@ -132,7 +130,7 @@ with tab_individual:
 
 with tab_batch:
     st.subheader("Predicción por lotes (CSV)")
-    st.caption("Encabezados requeridos: tiempo_contrato_meses,retrasos_pago,uso_mensual,plan")
+    st.caption("Encabezados requeridos: tiempo_contrato_meses,retrasos_pago,uso_mensual")
     uploaded = st.file_uploader("Subir CSV", type=["csv"])
 
     if uploaded is not None:

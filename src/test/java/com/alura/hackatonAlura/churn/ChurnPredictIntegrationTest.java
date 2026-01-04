@@ -22,11 +22,10 @@ class ChurnPredictIntegrationTest {
     @Test
     void postPredictWithValidPayloadReturnsPrediction() throws Exception {
         String payload = "{\n" +
-                "  \"tiempo_contrato_meses\": 12,\n" +
-                "  \"retrasos_pago\": 2,\n" +
-                "  \"uso_mensual\": 14.5,\n" +
-                "  \"plan\": \"Premium\"\n" +
-                "}";
+            "  \"tiempo_contrato_meses\": 12,\n" +
+            "  \"retrasos_pago\": 2,\n" +
+            "  \"uso_mensual\": 14.5\n" +
+            "}";
 
         mockMvc.perform(post("/api/churn/predict")
                         .contentType(MediaType.APPLICATION_JSON)

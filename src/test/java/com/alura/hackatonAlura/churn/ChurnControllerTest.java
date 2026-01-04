@@ -35,10 +35,10 @@ class ChurnControllerTest {
                 .willReturn(new ChurnPredictionResponse("Va a continuar", 0.23, List.of(), Instant.now()));
 
         String body = "{" +
-                "\"tiempo_contrato_meses\":12," +
-                "\"retrasos_pago\":2," +
-                "\"uso_mensual\":14.5," +
-                "\"plan\":\"Premium\"}";
+            "\"tiempo_contrato_meses\":12," +
+            "\"retrasos_pago\":2," +
+            "\"uso_mensual\":14.5" +
+            "}";
 
         mockMvc.perform(post("/api/churn/predict")
                         .contentType(MediaType.APPLICATION_JSON)
