@@ -10,7 +10,7 @@
         "method": "POST",
         "header": [{"key": "Content-Type", "value": "application/json"}],
         "url": {"raw": "http://localhost:8080/api/churn/predict", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api","churn","predict"]},
-        "body": {"mode": "raw", "raw": "{\n  \"tiempo_contrato_meses\": 24,\n  \"retrasos_pago\": 0,\n  \"uso_mensual\": 18.0,\n  \"plan\": \"Premium\"\n}"}
+        "body": {"mode": "raw", "raw": "{\n  \"tiempo_contrato_meses\": 24,\n  \"retrasos_pago\": 0,\n  \"uso_mensual\": 18.0\n}"}
       }
     },
     {
@@ -19,7 +19,7 @@
         "method": "POST",
         "header": [{"key": "Content-Type", "value": "application/json"}],
         "url": {"raw": "http://localhost:8080/api/churn/predict", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api","churn","predict"]},
-        "body": {"mode": "raw", "raw": "{\n  \"tiempo_contrato_meses\": 2,\n  \"retrasos_pago\": 3,\n  \"uso_mensual\": 5.0,\n  \"plan\": \"Basic\"\n}"}
+        "body": {"mode": "raw", "raw": "{\n  \"tiempo_contrato_meses\": 2,\n  \"retrasos_pago\": 3,\n  \"uso_mensual\": 5.0\n}"}
       }
     },
     {
@@ -28,7 +28,7 @@
         "method": "POST",
         "header": [{"key": "Content-Type", "value": "application/json"}],
         "url": {"raw": "http://localhost:8080/api/churn/predict/batch", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api","churn","predict","batch"]},
-        "body": {"mode": "raw", "raw": "[{\n  \"tiempo_contrato_meses\": 24,\n  \"retrasos_pago\": 0,\n  \"uso_mensual\": 18.0,\n  \"plan\": \"Premium\"\n},\n{\n  \"tiempo_contrato_meses\": 2,\n  \"retrasos_pago\": 3,\n  \"uso_mensual\": 5.0,\n  \"plan\": \"Basic\"\n}]"}
+        "body": {"mode": "raw", "raw": "[{\n  \"tiempo_contrato_meses\": 24,\n  \"retrasos_pago\": 0,\n  \"uso_mensual\": 18.0\n},\n{\n  \"tiempo_contrato_meses\": 2,\n  \"retrasos_pago\": 3,\n  \"uso_mensual\": 5.0\n}]"}
       }
     },
     {

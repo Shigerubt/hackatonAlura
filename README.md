@@ -49,7 +49,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
     {
       "errors": {
         "tiempo_contrato_meses": "Debe ser un entero no negativo",
-        "plan": "Valor inválido: use Basic/Standard/Premium"
+        "uso_mensual": "Debe ser un número no negativo"
       }
     }
     ```

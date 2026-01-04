@@ -95,7 +95,7 @@
       "url": "{{ baseUrl }}/api/churn/predict",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"tiempo_contrato_meses\": 12,\n  \"retrasos_pago\": 2,\n  \"uso_mensual\": 14.5,\n  \"plan\": \"Premium\"\n}"
+        "text": "{\n  \"tiempo_contrato_meses\": 12,\n  \"retrasos_pago\": 2,\n  \"uso_mensual\": 14.5\n}"
       },
       "headers": [
         { "name": "Content-Type", "value": "application/json" },
@@ -112,7 +112,7 @@
       "url": "{{ baseUrl }}/api/churn/predict/batch",
       "body": {
         "mimeType": "application/json",
-        "text": "[\n  { \n    \"tiempo_contrato_meses\": 12, \n    \"retrasos_pago\": 1, \n    \"uso_mensual\": 10.0, \n    \"plan\": \"Basic\" \n  },\n  { \n    \"tiempo_contrato_meses\": 6, \n    \"retrasos_pago\": 3, \n    \"uso_mensual\": 8.0, \n    \"plan\": \"Premium\" \n  }\n]"
+        "text": "[\n  { \n    \"tiempo_contrato_meses\": 12, \n    \"retrasos_pago\": 1, \n    \"uso_mensual\": 10.0 \n  },\n  { \n    \"tiempo_contrato_meses\": 6, \n    \"retrasos_pago\": 3, \n    \"uso_mensual\": 8.0 \n  }\n]"
       },
       "headers": [
         { "name": "Content-Type", "value": "application/json" },
