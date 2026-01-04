@@ -62,8 +62,9 @@ def call_stats(api_url: str, token: str | None):
 def call_batch_csv(api_url: str, csv_bytes: bytes, filename: str, token: str | None):
     try:
         headers = {}
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
+        norm = _normalize_token(token)
+        if norm:
+            headers["Authorization"] = f"Bearer {norm}"
         files = {"file": (filename, io.BytesIO(csv_bytes), "text/csv")}
         resp = requests.post(f"{api_url}/api/churn/predict/batch/csv", headers=headers, files=files, timeout=30)
         return resp
@@ -79,22 +80,64 @@ tab_individual, tab_batch, tab_stats = st.tabs(["Predicción individual", "Batch
 
 with tab_individual:
     st.subheader("Predicción individual")
+    st.caption("Esquema Telco (19 campos). Valores son sensibles a mayúsculas/minúsculas.")
     with st.form("form_individual"):
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
-            tiempo_contrato_meses = st.number_input("Tiempo de contrato (meses)", min_value=0, step=1, value=12)
-            retrasos_pago = st.number_input("Retrasos de pago", min_value=0, step=1, value=2)
+            gender = st.selectbox("gender", options=["Male", "Female"], index=1)
+            seniorCitizen = st.selectbox("SeniorCitizen", options=[0, 1], index=0)
+            partner = st.selectbox("Partner", options=["Yes", "No"], index=0)
+            dependents = st.selectbox("Dependents", options=["Yes", "No"], index=1)
+            tenure = st.number_input("tenure (meses)", min_value=0, step=1, value=24)
+            phoneService = st.selectbox("PhoneService", options=["Yes", "No"], index=0)
+            multipleLines = st.selectbox("MultipleLines", options=["No", "Yes", "No phone service"], index=0)
         with col2:
-            uso_mensual = st.number_input("Uso mensual", min_value=0.0, step=0.1, value=14.5)
+            internetService = st.selectbox("InternetService", options=["DSL", "Fiber optic", "No"], index=0)
+            onlineSecurity = st.selectbox("OnlineSecurity", options=["Yes", "No", "No internet service"], index=0)
+            onlineBackup = st.selectbox("OnlineBackup", options=["Yes", "No", "No internet service"], index=1)
+            deviceProtection = st.selectbox("DeviceProtection", options=["Yes", "No", "No internet service"], index=1)
+            techSupport = st.selectbox("TechSupport", options=["Yes", "No", "No internet service"], index=1)
+            streamingTV = st.selectbox("StreamingTV", options=["Yes", "No", "No internet service"], index=1)
+            streamingMovies = st.selectbox("StreamingMovies", options=["Yes", "No", "No internet service"], index=1)
+        with col3:
+            contract = st.selectbox("Contract", options=["Month-to-month", "One year", "Two year"], index=1)
+            paperlessBilling = st.selectbox("PaperlessBilling", options=["Yes", "No"], index=0)
+            paymentMethod = st.selectbox("PaymentMethod", options=[
+                "Electronic check", "Mailed check", "Bank transfer (automatic)", "Credit card (automatic)"
+            ], index=0)
+            monthlyCharges = st.number_input("MonthlyCharges", min_value=0.0, step=0.1, value=29.85)
+            totalCharges_opt = st.text_input("TotalCharges (opcional)", value="1889.50")
 
         submitted = st.form_submit_button("Predecir")
 
     if submitted:
         payload = {
-            "tiempo_contrato_meses": int(tiempo_contrato_meses),
-            "retrasos_pago": int(retrasos_pago),
-            "uso_mensual": float(uso_mensual),
+            "gender": gender,
+            "SeniorCitizen": int(seniorCitizen),
+            "Partner": partner,
+            "Dependents": dependents,
+            "tenure": int(tenure),
+            "PhoneService": phoneService,
+            "MultipleLines": multipleLines,
+            "InternetService": internetService,
+            "OnlineSecurity": onlineSecurity,
+            "OnlineBackup": onlineBackup,
+            "DeviceProtection": deviceProtection,
+            "TechSupport": techSupport,
+            "StreamingTV": streamingTV,
+            "StreamingMovies": streamingMovies,
+            "Contract": contract,
+            "PaperlessBilling": paperlessBilling,
+            "PaymentMethod": paymentMethod,
+            "MonthlyCharges": float(monthlyCharges),
         }
+        # TotalCharges opcional: vacío/null -> omitido para que backend normalice a 0.0
+        tc = (totalCharges_opt or "").strip()
+        if tc != "":
+            try:
+                payload["TotalCharges"] = float(tc)
+            except ValueError:
+                st.warning("TotalCharges inválido; se omitirá y el backend normalizará a 0.0.")
 
         resp = call_predict(api_url, payload, token)
         if resp is None:
@@ -102,20 +145,39 @@ with tab_individual:
 
         if resp.status_code == 200:
             data = resp.json()
+            # Campos legacy
             prevision = data.get("prevision")
             prob = data.get("probabilidad")
             top_feats = data.get("topFeatures") or data.get("top_features")
+            # Campos enriquecidos
+            metadata = data.get("metadata", {})
+            prediction = data.get("prediction", {})
+            business = data.get("business_logic", {})
 
             st.success("Predicción recibida")
-            colA, colB = st.columns(2)
+            colA, colB, colC = st.columns(3)
             with colA:
-                st.metric("Previsión", prevision)
+                if prevision:
+                    st.metric("Previsión", prevision)
                 if isinstance(prob, (int, float)):
                     st.progress(min(max(prob, 0), 1))
-                    st.caption(f"Probabilidad: {prob:.2f}")
+                    st.caption(f"Probabilidad (legacy): {prob:.2f}")
             with colB:
+                if prediction:
+                    st.metric("Riesgo", prediction.get("risk_level", "-"))
+                    cp = prediction.get("churn_probability")
+                    if isinstance(cp, (int, float)):
+                        st.progress(min(max(cp, 0), 1))
+                        st.caption(f"Probabilidad (modelo): {cp:.2f}")
+            with colC:
+                if business and business.get("suggested_action"):
+                    st.write("Acción sugerida:")
+                    st.success(business.get("suggested_action"))
                 if top_feats:
-                    st.write("Top features:", top_feats)
+                    st.write("Top features:")
+                    st.write(top_feats)
+            if metadata:
+                st.caption(f"Modelo: {metadata.get('model_version', 'N/A')} | TS: {metadata.get('timestamp', '')}")
             st.code(json.dumps(data, ensure_ascii=False, indent=2), language="json")
         elif resp.status_code == 400:
             try:
@@ -130,7 +192,9 @@ with tab_individual:
 
 with tab_batch:
     st.subheader("Predicción por lotes (CSV)")
-    st.caption("Encabezados requeridos: tiempo_contrato_meses,retrasos_pago,uso_mensual")
+    st.caption(
+        "Encabezados requeridos: gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,OnlineBackup,DeviceProtection,TechSupport,StreamingTV,StreamingMovies,Contract,PaperlessBilling,PaymentMethod,MonthlyCharges,TotalCharges"
+    )
     uploaded = st.file_uploader("Subir CSV", type=["csv"])
 
     if uploaded is not None:
