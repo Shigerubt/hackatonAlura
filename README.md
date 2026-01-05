@@ -82,9 +82,25 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer <token>" \
     -d '{
-      "tiempo_contrato_meses": 12,
-      "retrasos_pago": 2,
-      "uso_mensual": 14.5
+      "gender": "Female",
+      "SeniorCitizen": 0,
+      "Partner": "Yes",
+      "Dependents": "No",
+      "tenure": 24,
+      "PhoneService": "Yes",
+      "MultipleLines": "No",
+      "InternetService": "DSL",
+      "OnlineSecurity": "Yes",
+      "OnlineBackup": "No",
+      "DeviceProtection": "No",
+      "TechSupport": "No",
+      "StreamingTV": "No",
+      "StreamingMovies": "No",
+      "Contract": "One year",
+      "PaperlessBilling": "Yes",
+      "PaymentMethod": "Electronic check",
+      "MonthlyCharges": 29.85,
+      "TotalCharges": 1889.50
     }'
   ```
 - cURL (batch CSV):
