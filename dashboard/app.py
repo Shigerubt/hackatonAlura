@@ -154,7 +154,6 @@ with tab_individual:
             totalCharges_opt = st.text_input("TotalCharges (opcional)", value="1889.50")
 
         submitted = st.form_submit_button("Predecir")
-
     if submitted:
         payload = {
             "gender": gender,
@@ -246,7 +245,6 @@ with tab_batch:
         st.stop()
     uploaded = st.file_uploader("Subir CSV", type=["csv"])
 
-
     if uploaded is not None:
         # Vista previa local
         try:
@@ -313,6 +311,8 @@ with tab_batch:
         except Exception:
             st.write(results)
 
+
+
 with tab_evaluate:
     st.subheader("Evaluación con etiquetas (CSV)")
     st.caption(
@@ -365,73 +365,72 @@ with tab_evaluate:
 with tab_stats:
     st.subheader("Estadísticas")
 
-        if st.session_state.get("df_csv") is not None:
-            df = st.session_state["df_csv"]
-            st.success("🧪 Mostrando datos desde CSV (modo prueba)")
+    if st.session_state.get("df_csv") is not None:
+        df = st.session_state["df_csv"]
+        st.success("🧪 Mostrando datos desde CSV (modo prueba)")
 
-            total = len(df)
-            churn = df["churn"].sum()
-            tasa = churn / total if total > 0 else 0
+        total = len(df)
+        churn = df["churn"].sum()
+        tasa = churn / total if total > 0 else 0
 
-            if "riesgo" not in df.columns:
-                def calc_riesgo(p):
-                    if p < 0.3:
-                        return "bajo"
-                    elif p < 0.6:
-                        return "medio"
-                    else:
-                        return "alto"
+        if "riesgo" not in df.columns:
+            def calc_riesgo(p):
+                if p < 0.3:
+                    return "bajo"
+                elif p < 0.6:
+                    return "medio"
+                else:
+                    return "alto"
 
-                df["riesgo"] = df["prob_churn"].apply(calc_riesgo)
+            df["riesgo"] = df["prob_churn"].apply(calc_riesgo)
 
-            bajo = (df["riesgo"] == "bajo").sum()
-            medio = (df["riesgo"] == "medio").sum()
-            alto = (df["riesgo"] == "alto").sum()
+        bajo = (df["riesgo"] == "bajo").sum()
+        medio = (df["riesgo"] == "medio").sum()
+        alto = (df["riesgo"] == "alto").sum()
 
-        else:
-            st.info("Mostrando datos desde la base de datos")
+    else:
+        st.info("Mostrando datos desde la base de datos")
 
-            resp = call_stats(api_url, token)
-            if not resp or resp.status_code != 200:
-                st.warning("No se pudieron obtener estadísticas")
-                st.stop()
+        resp = call_stats(api_url, token)
+        if not resp or resp.status_code != 200:
+            st.warning("No se pudieron obtener estadísticas")
+            st.stop()
 
-            stats = resp.json()
+        stats = resp.json()
 
-            total = stats.get("total_evaluados", 0)
-            churn = stats.get("cancelaciones", 0)
-            tasa = stats.get("tasa_churn", 0.0)
+        total = stats.get("total_evaluados", 0)
+        churn = stats.get("cancelaciones", 0)
+        tasa = stats.get("tasa_churn", 0.0)
 
-            riesgo = stats.get("riesgo", {})
-            bajo = riesgo.get("bajo", 0)
-            medio = riesgo.get("medio", 0)
-            alto = riesgo.get("alto", 0)
+        riesgo = stats.get("riesgo", {})
+        bajo = riesgo.get("bajo", 0)
+        medio = riesgo.get("medio", 0)
+        alto = riesgo.get("alto", 0)
 
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Total evaluados", total)
-            c2.metric("Cancelaciones", churn)
-            c3.metric("Tasa churn", f"{tasa * 100:.1f}%")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Total evaluados", total)
+        c2.metric("Cancelaciones", churn)
+        c3.metric("Tasa churn", f"{tasa * 100:.1f}%")
 
-            st.divider()
+        st.divider()
 
 
-            colA, colB = st.columns(2)
+        colA, colB = st.columns(2)
 
-            with colA:
-                st.subheader("Distribución de riesgo")
-                df_riesgo = pd.DataFrame({
-                "Riesgo": ["Bajo", "Medio", "Alto"],
-                "Clientes": [bajo, medio, alto]
-                })
-                st.bar_chart(df_riesgo.set_index("Riesgo"))
+        with colA:
+            st.subheader("Distribución de riesgo")
+            df_riesgo = pd.DataFrame({
+            "Riesgo": ["Bajo", "Medio", "Alto"],
+            "Clientes": [bajo, medio, alto]
+            })
+            st.bar_chart(df_riesgo.set_index("Riesgo"))
 
-            with colB:
-                st.subheader("Churn vs Continúan")
-                df_churn = pd.DataFrame({
-                        "Estado": ["Va a continuar", "Va a cancelar"],
-                        "Clientes": [total - churn, churn]
-                })
-                st.bar_chart(df_churn.set_index("Estado"))
+        with colB:
+            st.subheader("Churn vs Continúan")
+            df_churn = pd.DataFrame({
+                    "Estado": ["Va a continuar", "Va a cancelar"],
+                    "Clientes": [total - churn, churn]
+            })
+            st.bar_chart(df_churn.set_index("Estado"))
 
-            st.caption("Datos calculados desde base de datos (producción-like)")
-
+        st.caption("Datos calculados desde base de datos (producción-like)")
