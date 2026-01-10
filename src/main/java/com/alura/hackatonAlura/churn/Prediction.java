@@ -31,6 +31,11 @@ public class Prediction {
     // 'plan' ya no es obligatorio; se permite nulo para compatibilidad histórica
     private String plan;
 
+
+
+    @Column(nullable = false)
+    private String riskLevel;
+
     @Column(nullable = false)
     private String source; // DS | heuristic
 
@@ -45,6 +50,14 @@ public class Prediction {
 
     public double getProbabilidad() { return probabilidad; }
     public void setProbabilidad(double probabilidad) { this.probabilidad = probabilidad; }
+
+    public String getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(String riskLevel) {
+        this.riskLevel = riskLevel;
+    }
 
     public Integer getTiempoContratoMeses() { return tiempoContratoMeses; }
     public void setTiempoContratoMeses(Integer tiempoContratoMeses) { this.tiempoContratoMeses = tiempoContratoMeses; }
