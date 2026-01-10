@@ -9,6 +9,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,6 +51,11 @@ public class ChurnService {
         if ("Va a cancelar".equalsIgnoreCase(res.getPrevision())) {
             churnCount.incrementAndGet();
         }
+
+        //Calcular riskLevel
+        String riskLevel = getRiskLevel(res.getPrediction());
+        double prob = res.getPrediction() != null ? res.getPrediction().churn_probability : 0.0;
+
         // Persist
         Prediction p = new Prediction();
         p.setCreatedAt(Instant.now());
@@ -60,19 +66,52 @@ public class ChurnService {
         p.setRetrasosPago(0); // campo legado sin equivalente directo
         p.setUsoMensual(req.getMonthlyCharges());
         p.setSource(res.getTopFeatures() != null ? (dsUrl.isEmpty() ? "heuristic" : "DS") : (dsUrl.isEmpty() ? "heuristic" : "DS"));
+        p.setRiskLevel(riskLevel);
         predictionRepository.save(p);
         log.info("Predicción: label={}, prob={}, source={}", res.getPrevision(), String.format("%.3f", res.getProbabilidad()), p.getSource());
         return res;
     }
 
+    private String getRiskLevel(ChurnPredictionResponse.PredictionInfo prediction) {
+        double prob = prediction != null ? prediction.churn_probability : 0.0;
+        if (prob >= 0.66) {
+            return "alto";
+        } else if (prob >= 0.33) {
+            return "medio";
+        } else {
+            return "bajo";
+        }
+    }
+
+
     public Map<String, Object> stats() {
-        int total = totalEvaluados.get();
-        double tasa = total == 0 ? 0.0 : ((double) churnCount.get()) / total;
+
+        long total = predictionRepository.count();
+        long churn = predictionRepository.countByPrevision("Va a cancelar");
+        double tasa = total == 0 ? 0.0 : (double) churn / total;
+
+        Map<String, Long> riesgo = new HashMap<>();
+        riesgo.put("bajo", 0L);
+        riesgo.put("medio", 0L);
+        riesgo.put("alto", 0L);
+
+        for (Object[] row : predictionRepository.countByRisk()) {
+            String r = ((String) row[0]).toLowerCase();
+            Long c = ((Number) row[1]).longValue();
+
+            if (r.contains("alto")) riesgo.put("alto", c);
+            else if (r.contains("medio")) riesgo.put("medio", c);
+            else riesgo.put("bajo", c);
+        }
+
         return Map.of(
                 "total_evaluados", total,
-                "tasa_churn", tasa
+                "cancelaciones", churn,
+                "tasa_churn", tasa,
+                "riesgo", riesgo
         );
     }
+
 
     private ChurnPredictionResponse callDsService(ChurnRequest req) {
         // Contract: send nested features with canonical 20 variables

@@ -246,40 +246,72 @@ with tab_batch:
         st.stop()
     uploaded = st.file_uploader("Subir CSV", type=["csv"])
 
+
     if uploaded is not None:
         # Vista previa local
         try:
-            df_preview = pd.read_csv(uploaded)
-            st.dataframe(df_preview.head(20), use_container_width=True)
+            df = pd.read_csv(uploaded)
+            st.dataframe(df.head(20), use_container_width=True)
         except Exception as e:
             st.warning(f"No se pudo leer el CSV para vista previa: {e}")
-
-        # Enviar al backend
-        resp = call_batch_csv(api_url, uploaded.getvalue(), uploaded.name, token)
-        if resp is None:
             st.stop()
 
-        if resp.status_code == 200:
-            data = resp.json()
-            items = data.get("items", [])
-            total = data.get("total")
-            cancelaciones = data.get("cancelaciones")
-            st.success("Resultados del lote")
-            st.write(f"Total: {total} | Cancelaciones: {cancelaciones}")
-            try:
-                st.dataframe(pd.DataFrame(items), use_container_width=True)
-            except Exception:
-                st.write(items)
-            st.code(json.dumps(data, ensure_ascii=False, indent=2), language="json")
-        elif resp.status_code == 400:
-            try:
-                err = resp.json()
-                st.error("Error al procesar CSV")
-                st.code(json.dumps(err, ensure_ascii=False, indent=2), language="json")
-            except Exception:
-                st.error(f"Solicitud inválida: {resp.text}")
-        else:
-            st.error(f"Error {resp.status_code}: {resp.text}")
+        #estabilizar informacion yes a 1 y no a 0
+        map_yes_no = {"Yes": 1, "No": 0}
+        numeric_cols_yes_no = ["SeniorCitizen", "Partner", "Dependents", "PhoneService"]
+        for col in numeric_cols_yes_no:
+            if col in df.columns:
+                df[col] = df[col].map(map_yes_no).fillna(df[col]).astype(int)
+
+        #tamaño de fragmento a procesar en dataset grandes
+        chunk_size = 1000
+        results = []
+        total = 0
+        cancelaciones = 0
+
+        num_chunks = (len(df) + chunk_size - 1) // chunk_size
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+
+        for i, start in enumerate(range(0, len(df), chunk_size)):
+            df_chunk = df.iloc[start : start + chunk_size]
+
+            # Convertir a CSV en memoria
+            csv_buffer = io.StringIO()
+            df_chunk.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode("utf-8")
+
+            # Enviar al backend **dentro del bucle**
+            resp = call_batch_csv(api_url, csv_bytes, uploaded.name, token)
+            if resp is None:
+                st.stop()
+
+            if resp.status_code == 200:
+                data = resp.json()
+                items = data.get("items", [])
+                results.extend(items)
+                total += data.get("total", 0)
+                cancelaciones += data.get("cancelaciones", 0)
+            elif resp.status_code == 400:
+                try:
+                    err = resp.json()
+                    st.error(f"Error al procesar CSV en chunk {i+1}")
+                    st.code(json.dumps(err, ensure_ascii=False, indent=2), language="json")
+                except Exception:
+                    st.error(f"Solicitud inválida: {resp.text}")
+            else:
+                st.error(f"Error {resp.status_code} en chunk {i+1}: {resp.text}")
+
+            # Actualizar barra de progreso
+            progress_bar.progress((i + 1) / num_chunks)
+            status_text.text(f"Procesando chunk {i + 1} de {num_chunks}...")
+
+        # Mostrar resultados finales
+        st.success(f"Batch completo procesado: Total={total}, Cancelaciones={cancelaciones}")
+        try:
+            st.dataframe(pd.DataFrame(results), use_container_width=True)
+        except Exception:
+            st.write(results)
 
 with tab_evaluate:
     st.subheader("Evaluación con etiquetas (CSV)")
@@ -332,10 +364,74 @@ with tab_evaluate:
 
 with tab_stats:
     st.subheader("Estadísticas")
-    resp = call_stats(api_url, token)
-    if resp:
-        if resp.status_code == 200:
-            stats = resp.json()
-            st.json(stats)
+
+        if st.session_state.get("df_csv") is not None:
+            df = st.session_state["df_csv"]
+            st.success("🧪 Mostrando datos desde CSV (modo prueba)")
+
+            total = len(df)
+            churn = df["churn"].sum()
+            tasa = churn / total if total > 0 else 0
+
+            if "riesgo" not in df.columns:
+                def calc_riesgo(p):
+                    if p < 0.3:
+                        return "bajo"
+                    elif p < 0.6:
+                        return "medio"
+                    else:
+                        return "alto"
+
+                df["riesgo"] = df["prob_churn"].apply(calc_riesgo)
+
+            bajo = (df["riesgo"] == "bajo").sum()
+            medio = (df["riesgo"] == "medio").sum()
+            alto = (df["riesgo"] == "alto").sum()
+
         else:
-            st.warning(f"No disponible ({resp.status_code})")
+            st.info("Mostrando datos desde la base de datos")
+
+            resp = call_stats(api_url, token)
+            if not resp or resp.status_code != 200:
+                st.warning("No se pudieron obtener estadísticas")
+                st.stop()
+
+            stats = resp.json()
+
+            total = stats.get("total_evaluados", 0)
+            churn = stats.get("cancelaciones", 0)
+            tasa = stats.get("tasa_churn", 0.0)
+
+            riesgo = stats.get("riesgo", {})
+            bajo = riesgo.get("bajo", 0)
+            medio = riesgo.get("medio", 0)
+            alto = riesgo.get("alto", 0)
+
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Total evaluados", total)
+            c2.metric("Cancelaciones", churn)
+            c3.metric("Tasa churn", f"{tasa * 100:.1f}%")
+
+            st.divider()
+
+
+            colA, colB = st.columns(2)
+
+            with colA:
+                st.subheader("Distribución de riesgo")
+                df_riesgo = pd.DataFrame({
+                "Riesgo": ["Bajo", "Medio", "Alto"],
+                "Clientes": [bajo, medio, alto]
+                })
+                st.bar_chart(df_riesgo.set_index("Riesgo"))
+
+            with colB:
+                st.subheader("Churn vs Continúan")
+                df_churn = pd.DataFrame({
+                        "Estado": ["Va a continuar", "Va a cancelar"],
+                        "Clientes": [total - churn, churn]
+                })
+                st.bar_chart(df_churn.set_index("Estado"))
+
+            st.caption("Datos calculados desde base de datos (producción-like)")
+
