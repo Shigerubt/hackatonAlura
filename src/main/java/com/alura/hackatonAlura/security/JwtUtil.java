@@ -20,10 +20,11 @@ public class JwtUtil {
     private final long expirationMinutes;
 
     public JwtUtil(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration-minutes}") long expirationMinutes
+            @Value("${jwt.secret:}") String jwtSecret,
+            @Value("${api.security.secret:}") String apiSecuritySecret,
+            @Value("${jwt.expiration-minutes:120}") long expirationMinutes
     ) {
-        this.secret = secret;
+        this.secret = (jwtSecret != null && !jwtSecret.isBlank()) ? jwtSecret : apiSecuritySecret;
         this.expirationMinutes = expirationMinutes;
     }
 
@@ -47,5 +48,9 @@ public class JwtUtil {
     public Claims parseToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody();
+    }
+
+    public String getSubject(String token) {
+        return parseToken(token).getSubject();
     }
 }
