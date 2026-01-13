@@ -288,3 +288,26 @@ streamlit run dashboard/app.py
 - Para prueba de lote, usa el CSV de ejemplo en [samples/churn_batch_sample.csv](samples/churn_batch_sample.csv).
 - También se aceptan archivos extendidos que incluyan columnas adicionales como `customerID` y `Churn`; el backend ignora columnas no utilizadas. Asegúrate de incluir las 20 columnas canónicas con nombres exactos.
 - Código del panel: [dashboard/app.py](dashboard/app.py) | Dependencias: [dashboard/requirements.txt](dashboard/requirements.txt)
+
+### Tips opcionales (Docker / Dashboard)
+- Rebuild solo del dashboard (rápido al iterar UI):
+  ```powershell
+  docker compose build --no-cache dashboard
+  docker compose up -d --force-recreate dashboard
+  ```
+- Ver logs en tiempo real del dashboard:
+  ```powershell
+  docker compose logs -f dashboard
+  ```
+- Validar que el contenedor usa tu `app.py` actualizado (comparar hash):
+  ```powershell
+  # Hash local
+  python -c "import hashlib;print(hashlib.sha256(open('dashboard/app.py','rb').read()).hexdigest())"
+  # Hash dentro del contenedor
+  docker compose exec dashboard python -c "import hashlib;print(hashlib.sha256(open('/app/app.py','rb').read()).hexdigest())"
+  ```
+- Orquestación con reconstrucción y recreación (script):
+  ```powershell
+  ./run.ps1 -Build            # reconstruye y fuerza recreación
+  ./run.ps1 -NoCache -Build   # reconstrucción cache-busting + recreación
+  ```
