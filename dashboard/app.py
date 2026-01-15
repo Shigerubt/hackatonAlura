@@ -96,7 +96,7 @@ def call_batch_csv(api_url: str, csv_bytes: bytes, filename: str, token: str | N
         if norm:
             headers["Authorization"] = f"Bearer {norm}"
         files = {"file": (filename, io.BytesIO(csv_bytes), "text/csv")}
-        resp = requests.post(f"{api_url}/api/churn/predict/batch/csv", headers=headers, files=files, timeout=30)
+        resp = requests.post(f"{api_url}/api/churn/predict/batch/csv", headers=headers, files=files, timeout=300)
         return resp
     except requests.RequestException as e:
         st.error(f"Error de red al llamar batch CSV: {e}")
@@ -261,8 +261,13 @@ with tab_batch:
             if col in df.columns:
                 df[col] = df[col].map(map_yes_no).fillna(df[col]).astype(int)
 
+        numeric_cols = ["tenure", "MonthlyCharges", "TotalCharges"]
+        for col in numeric_cols:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
+
         #tamaño de fragmento a procesar en dataset grandes
-        chunk_size = 1000
+        chunk_size = 2000
         results = []
         total = 0
         cancelaciones = 0

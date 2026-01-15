@@ -6,7 +6,7 @@ services:
     environment:
       - CHURN_MODEL_DIR=/models
     volumes:
-      - ./models:/models:ro
+      - ./ds-service/models:/models:ro
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket,sys;s=socket.socket();s.settimeout(1);s.connect(('127.0.0.1',8000));s.close();sys.exit(0)\""]
       interval: 10s
