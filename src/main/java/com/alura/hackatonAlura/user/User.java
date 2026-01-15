@@ -1,15 +1,17 @@
 package com.alura.hackatonAlura.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import com.alura.hackatonAlura.auth.UserResponse;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
+
+import java.util.List;
+import java.util.Locale;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -37,8 +39,9 @@ public class User {
     private String fullName;
 
     @Column(nullable = false)
-    @NotBlank
-    private String roles = "USER";
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Role roles = Role.USER;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -57,16 +60,12 @@ public class User {
         if (updatedAt == null) {
             updatedAt = createdAt != null ? createdAt : Instant.now();
         }
-        if (roles == null || roles.isBlank()) {
-            roles = "USER";
-        }
     }
 
     @PreUpdate
     public void preUpdate() {
         updatedAt = Instant.now();
     }
-
     public Long getId() {
         return id;
     }
@@ -99,11 +98,11 @@ public class User {
         this.fullName = fullName;
     }
 
-    public String getRoles() {
+    public Role getRoles() {
         return roles;
     }
 
-    public void setRoles(String roles) {
+    public void setRoles(Role roles) {
         this.roles = roles;
     }
 
@@ -121,5 +120,7 @@ public class User {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+
     }
+
 }

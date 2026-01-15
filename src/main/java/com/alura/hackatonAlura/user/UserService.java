@@ -1,12 +1,14 @@
 package com.alura.hackatonAlura.user;
 
 import com.alura.hackatonAlura.auth.UserResponse;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class UserService {
@@ -41,7 +43,9 @@ public class UserService {
             user.setEmail(newEmail);
         }
 
-        user.setFullName(req.fullName());
+        if (req.fullName() != null && !req.fullName().isBlank()) {
+            user.setFullName(req.fullName());
+        }
 
         User saved = userRepository.save(user);
         return new UserResponse(saved.getId(), saved.getEmail(), saved.getFullName(), saved.getRoles());
@@ -61,33 +65,27 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(String email, String password, String fullName, String role) {
+    public User createUser(String email, String password, String fullName, Role role) {
         String emailLower = email.toLowerCase(Locale.ROOT).trim();
         if (userRepository.existsByEmail(emailLower)) {
             throw new IllegalArgumentException("Email already in use");
         }
         String hashed = passwordEncoder.encode(password);
-        String roleNorm = role.toUpperCase(Locale.ROOT).trim();
-        if (!roleNorm.equals("ADMIN") && !roleNorm.equals("USER")) {
-            throw new IllegalArgumentException("Invalid role");
-        }
         User u = new User();
         u.setEmail(emailLower);
         u.setPasswordHash(hashed);
         u.setFullName(fullName);
-        u.setRoles(roleNorm);
+        u.setRoles(role != null ? role : Role.USER);
+
         return userRepository.save(u);
     }
 
     @Transactional
-    public User updateRole(Long id, String role) {
+    public User updateRole(Long id, Role role) {
         User u = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        String roleNorm = role.toUpperCase(Locale.ROOT).trim();
-        if (!roleNorm.equals("ADMIN") && !roleNorm.equals("USER")) {
-            throw new IllegalArgumentException("Invalid role");
-        }
-        u.setRoles(roleNorm);
+
+        u.setRoles(role);
         return userRepository.save(u);
     }
 
@@ -124,4 +122,28 @@ public class UserService {
         u.setPasswordHash(hashed);
         userRepository.save(u);
     }
+
+    @Transactional
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return new UserResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getRoles()
+        );
+    }
+
+    public void updatePassword(String userId, @Valid UpdatePasswordRequest req) {
+        Long id = Long.parseLong(userId);
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setPasswordHash(passwordEncoder.encode(req.newPassword()));
+        userRepository.save(user);
+    }
 }
+
