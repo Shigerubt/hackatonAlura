@@ -267,7 +267,7 @@ with tab_batch:
                 df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
 
         #tamaño de fragmento a procesar en dataset grandes
-        chunk_size = 2000
+        chunk_size = 1000
         results = []
         total = 0
         cancelaciones = 0
