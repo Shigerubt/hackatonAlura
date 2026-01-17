@@ -254,13 +254,6 @@ with tab_batch:
             st.warning(f"No se pudo leer el CSV para vista previa: {e}")
             st.stop()
 
-        #estabilizar informacion yes a 1 y no a 0
-        map_yes_no = {"Yes": 1, "No": 0}
-        numeric_cols_yes_no = ["SeniorCitizen", "Partner", "Dependents", "PhoneService"]
-        for col in numeric_cols_yes_no:
-            if col in df.columns:
-                df[col] = df[col].map(map_yes_no).fillna(df[col]).astype(int)
-
         #tamaño de fragmento a procesar en dataset grandes
         chunk_size = 1000
         results = []
