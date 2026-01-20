@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/h2-console/**"
                         ).permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/churn/**").permitAll()
                         .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex.authenticationEntryPoint(restEntryPoint))

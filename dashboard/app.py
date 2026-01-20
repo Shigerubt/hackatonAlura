@@ -96,7 +96,7 @@ def call_batch_csv(api_url: str, csv_bytes: bytes, filename: str, token: str | N
         if norm:
             headers["Authorization"] = f"Bearer {norm}"
         files = {"file": (filename, io.BytesIO(csv_bytes), "text/csv")}
-        resp = requests.post(f"{api_url}/api/churn/predict/batch/csv", headers=headers, files=files, timeout=30)
+        resp = requests.post(f"{api_url}/api/churn/predict/batch/csv", headers=headers, files=files, timeout=300)
         return resp
     except requests.RequestException as e:
         st.error(f"Error de red al llamar batch CSV: {e}")
@@ -116,6 +116,17 @@ def call_evaluate_csv(api_url: str, csv_bytes: bytes, filename: str, token: str 
         st.error(f"Error de red al llamar evaluación CSV: {e}")
         return None
 
+def call_top_risk(api_url: str, token: str | None):
+     try:
+         resp = requests.get(
+             f"{api_url}/api/churn/predictions/top-risk",
+             headers=build_headers(token),
+             timeout=60
+         )
+         return resp
+     except requests.RequestException as e:
+         st.error(f"Error al llamar top-risk: {e}")
+         return None
 
 api_url = get_api_base_url()
 login_quick(api_url)
@@ -255,7 +266,7 @@ with tab_batch:
             st.stop()
 
         #tamaño de fragmento a procesar en dataset grandes
-        chunk_size = 1000
+        chunk_size = 800
         results = []
         total = 0
         cancelaciones = 0
@@ -427,3 +438,63 @@ with tab_stats:
             st.bar_chart(df_churn.set_index("Estado"))
 
         st.caption("Datos calculados desde base de datos (producción-like)")
+
+    st.divider()
+    st.subheader("Top 20 clientes con mayor riesgo de cancelación")
+
+
+    resp = call_top_risk(api_url, token)
+
+    if resp and resp.status_code == 200:
+        data = resp.json()
+
+        if not data:
+            st.info("No hay clientes en riesgo actualmente.")
+        else:
+            df = pd.DataFrame(data)
+
+            # Formatos
+            df["probabilidad"] = (df["probabilidad"] * 100).round(1)
+            df["createdAt"] = pd.to_datetime(df["createdAt"])
+            df["usoMensual"] = df["usoMensual"].round(1)
+
+            # Renombres para UI
+            df = df.rename(columns={
+                "id": "ID Cliente",
+                "createdAt": "Fecha",
+                "probabilidad": "Prob. cancelación (%)",
+                "riskLevel": "Riesgo",
+                "tiempoContratoMeses": "Antigüedad (meses)",
+                "retrasosPago": "Retrasos de pago",
+                "usoMensual": "Uso mensual"
+            })
+
+            # Orden final de columnas
+            df = df[[
+                "ID Cliente",
+                "Riesgo",
+                "Prob. cancelación (%)",
+                "Antigüedad (meses)",
+                "Uso mensual",
+                "Retrasos de pago",
+                "Fecha"
+            ]]
+
+            # Colores por riesgo
+            def risk_color(val):
+                if val == "alto":
+                    return "background-color: #7f1d1d"
+                if val == "medio":
+                    return "background-color: #78350f"
+                if val == "bajo":
+                    return "background-color: #064e3b"
+                return ""
+
+            styled = df.style.applymap(risk_color, subset=["Riesgo"])
+
+            st.dataframe(styled, use_container_width=True)
+    else:
+        if resp is None:
+                st.error("No hubo respuesta del backend")
+        else:
+            st.error(f"Error {resp.status_code}: {resp.text}")

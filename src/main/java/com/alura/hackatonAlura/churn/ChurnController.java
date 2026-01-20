@@ -39,6 +39,11 @@ public class ChurnController {
         return churnService.stats();
     }
 
+    @GetMapping("/predictions/top-risk")
+    public List<Prediction> topRiskPredictions() {
+        return churnService.topRiskPredictions();
+    }
+
     @PostMapping(path = "/predict/batch", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> predictBatch(@Valid @RequestBody List<ChurnRequest> requests) {
         log.info("/predict/batch recibido: {} elementos", requests.size());

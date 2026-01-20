@@ -15,4 +15,8 @@ public interface PredictionRepository extends JpaRepository<Prediction, Long> {
     group by p.riskLevel
 """)
     List<Object[]> countByRisk();
+
+    List<Prediction> findTop20ByOrderByProbabilidadDesc();
+
 }
+

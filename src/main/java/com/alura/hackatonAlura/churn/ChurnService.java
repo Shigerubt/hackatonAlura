@@ -230,4 +230,8 @@ public class ChurnService {
         out.setBusiness_logic(bl);
         return out;
     }
+
+    public List<Prediction> topRiskPredictions() {
+        return predictionRepository.findTop20ByOrderByProbabilidadDesc();
+    }
 }

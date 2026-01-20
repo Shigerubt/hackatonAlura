@@ -35,17 +35,32 @@ function Compose {
 }
 
 function Wait-HttpOk {
-    param([string]$Url, [int]$Retries = 30, [int]$DelaySeconds = 2, [hashtable]$Headers)
+    param(
+        [string]$Url,
+        [int]$Retries = 180,
+        [int]$DelaySeconds = 2,
+        [hashtable]$Headers
+    )
+
     for ($i = 0; $i -lt $Retries; $i++) {
         try {
-            $params = @{ Uri = $Url; UseBasicParsing = $true }
-            if ($Headers) { $params.Headers = $Headers }
+            $params = @{
+                Uri = $Url
+                UseBasicParsing = $true
+                TimeoutSec = 60
+            }
+
+            if ($Headers) {
+                $params.Headers = $Headers
+            }
+
             $res = Invoke-RestMethod @params
             return $res
         } catch {
             Start-Sleep -Seconds $DelaySeconds
         }
     }
+
     throw "Timeout waiting for $Url"
 }
 
@@ -53,7 +68,7 @@ function Wait-PortOpen {
     param(
         [string]$HostName = "127.0.0.1",
         [int]$Port,
-        [int]$Retries = 30,
+        [int]$Retries = 100,
         [int]$DelaySeconds = 2
     )
     for ($i = 0; $i -lt $Retries; $i++) {
@@ -92,7 +107,7 @@ if ($Build) {
 }
 Compose -Docker $docker -ComposeFile $composeFile -Args $composeArgs
 
-Write-Host "Waiting for DS health (http://localhost:8000/health)..." -ForegroundColor Cyan
+Write-Host "Waiting for DS health (http://127.0.0.1:8000/health)..." -ForegroundColor Cyan
 $ds = Wait-HttpOk -Url "http://localhost:8000/health"
 Write-Host "DS status: $($ds.status)" -ForegroundColor Green
 
@@ -109,7 +124,7 @@ $loginDelaySeconds = 3
 $token = $null
 for ($i = 0; $i -lt $maxLoginRetries; $i++) {
     try {
-        $res = Invoke-RestMethod -Method POST -Uri "http://localhost:8080/api/auth/login" -ContentType "application/json" -Body $loginBody -UseBasicParsing
+        $res = Invoke-RestMethod -Method POST -Uri "http://127.0.0.1:8080/api/auth/login" -ContentType "application/json" -Body $loginBody -UseBasicParsing
         $token = $res.token
         if ($token) { break }
     } catch {
@@ -119,7 +134,7 @@ for ($i = 0; $i -lt $maxLoginRetries; $i++) {
 if (-not $token) { throw "Failed to obtain JWT after $maxLoginRetries attempts" }
 
 $headers = @{ Authorization = "Bearer $token" }
-$api = Wait-HttpOk -Url "http://localhost:8080/actuator/health" -Headers $headers
+$api = Wait-HttpOk -Url "http://127.0.0.1:8080/actuator/health" -Headers $headers
 Write-Host "API status: $($api.status)" -ForegroundColor Green
 
 Write-Host "Opening dashboard at http://localhost:8501" -ForegroundColor Cyan
