@@ -128,6 +128,19 @@ def call_top_risk(api_url: str, token: str | None):
          st.error(f"Error al llamar top-risk: {e}")
          return None
 
+def call_clear_predictions(api_url: str, token: str | None):
+    try:
+        resp = requests.delete(
+            f"{api_url}/api/churn/predictions/clear",
+            headers=build_headers(token),
+            timeout=30
+        )
+        return resp
+    except requests.RequestException as e:
+        st.error(f"Error al limpiar datos: {e}")
+        return None
+
+
 api_url = get_api_base_url()
 login_quick(api_url)
 token = get_auth_token()
@@ -257,6 +270,7 @@ with tab_batch:
     uploaded = st.file_uploader("Subir CSV", type=["csv"])
 
     if uploaded is not None:
+
         # Vista previa local
         try:
             df = pd.read_csv(uploaded)
@@ -265,55 +279,56 @@ with tab_batch:
             st.warning(f"No se pudo leer el CSV para vista previa: {e}")
             st.stop()
 
-        #tamaño de fragmento a procesar en dataset grandes
-        chunk_size = 800
-        results = []
-        total = 0
-        cancelaciones = 0
+        if st.button("Iniciar procesamiento de lote"):
+            #tamaño de fragmento a procesar en dataset grandes
+            chunk_size = 800
+            results = []
+            total = 0
+            cancelaciones = 0
 
-        num_chunks = (len(df) + chunk_size - 1) // chunk_size
-        progress_bar = st.progress(0)
-        status_text = st.empty()
+            num_chunks = (len(df) + chunk_size - 1) // chunk_size
+            progress_bar = st.progress(0)
+            status_text = st.empty()
 
-        for i, start in enumerate(range(0, len(df), chunk_size)):
-            df_chunk = df.iloc[start : start + chunk_size]
+            for i, start in enumerate(range(0, len(df), chunk_size)):
+                df_chunk = df.iloc[start : start + chunk_size]
 
-            # Convertir a CSV en memoria
-            csv_buffer = io.StringIO()
-            df_chunk.to_csv(csv_buffer, index=False)
-            csv_bytes = csv_buffer.getvalue().encode("utf-8")
+                # Convertir a CSV en memoria
+                csv_buffer = io.StringIO()
+                df_chunk.to_csv(csv_buffer, index=False)
+                csv_bytes = csv_buffer.getvalue().encode("utf-8")
 
-            # Enviar al backend **dentro del bucle**
-            resp = call_batch_csv(api_url, csv_bytes, uploaded.name, token)
-            if resp is None:
-                st.stop()
+                # Enviar al backend **dentro del bucle**
+                resp = call_batch_csv(api_url, csv_bytes, uploaded.name, token)
+                if resp is None:
+                    st.stop()
 
-            if resp.status_code == 200:
-                data = resp.json()
-                items = data.get("items", [])
-                results.extend(items)
-                total += data.get("total", 0)
-                cancelaciones += data.get("cancelaciones", 0)
-            elif resp.status_code == 400:
-                try:
-                    err = resp.json()
-                    st.error(f"Error al procesar CSV en chunk {i+1}")
-                    st.code(json.dumps(err, ensure_ascii=False, indent=2), language="json")
-                except Exception:
-                    st.error(f"Solicitud inválida: {resp.text}")
-            else:
-                st.error(f"Error {resp.status_code} en chunk {i+1}: {resp.text}")
+                if resp.status_code == 200:
+                    data = resp.json()
+                    items = data.get("items", [])
+                    results.extend(items)
+                    total += data.get("total", 0)
+                    cancelaciones += data.get("cancelaciones", 0)
+                elif resp.status_code == 400:
+                    try:
+                        err = resp.json()
+                        st.error(f"Error al procesar CSV en chunk {i+1}")
+                        st.code(json.dumps(err, ensure_ascii=False, indent=2), language="json")
+                    except Exception:
+                        st.error(f"Solicitud inválida: {resp.text}")
+                else:
+                    st.error(f"Error {resp.status_code} en chunk {i+1}: {resp.text}")
 
-            # Actualizar barra de progreso
-            progress_bar.progress((i + 1) / num_chunks)
-            status_text.text(f"Procesando chunk {i + 1} de {num_chunks}...")
+                # Actualizar barra de progreso
+                progress_bar.progress((i + 1) / num_chunks)
+                status_text.text(f"Procesando chunk {i + 1} de {num_chunks}...")
 
-        # Mostrar resultados finales
-        st.success(f"Batch completo procesado: Total={total}, Cancelaciones={cancelaciones}")
-        try:
-            st.dataframe(pd.DataFrame(results), use_container_width=True)
-        except Exception:
-            st.write(results)
+            # Mostrar resultados finales
+            st.success(f"Batch completo procesado: Total={total}, Cancelaciones={cancelaciones}")
+            try:
+                st.dataframe(pd.DataFrame(results), use_container_width=True)
+            except Exception:
+                st.write(results)
 
 
 
@@ -368,10 +383,44 @@ with tab_evaluate:
 
 with tab_stats:
     st.subheader("Estadísticas")
+    st.markdown("### Gestión de datos")
+    if not _normalize_token(token):
+            st.info("Necesitas autenticación para limpiar los datos.")
+    else:
+        if "confirm_clear" not in st.session_state:
+            st.session_state.confirm_clear = False
+
+        if not st.session_state.confirm_clear:
+            if st.button("Limpiar datos"):
+                st.session_state.confirm_clear = True
+                st.rerun()
+        else:
+            st.warning("Esta acción eliminará TODOS los datos de predicciones.")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Sí, eliminar todo"):
+                    with st.spinner("Eliminando datos..."):
+                        resp_clear = call_clear_predictions(api_url, token)
+
+                    if resp_clear and resp_clear.status_code in (200, 204):
+                        if "df_csv" in st.session_state:
+                            del st.session_state["df_csv"]
+                            st.session_state.confirm_clear = False
+                        st.success("Datos eliminados correctamente")
+                        st.rerun()
+                    else:
+                        st.error("Error al eliminar datos" if resp_clear is None else f"Error {resp_clear.status_code}: {resp_clear.text}")
+
+            with col2:
+                if st.button("Cancelar"):
+                    st.session_state.confirm_clear = False
+                    st.rerun()
+
+    st.divider()
 
     if st.session_state.get("df_csv") is not None:
         df = st.session_state["df_csv"]
-        st.success("🧪 Mostrando datos desde CSV (modo prueba)")
+        st.success("Mostrando datos desde CSV (modo prueba)")
 
         total = len(df)
         churn = df["churn"].sum()

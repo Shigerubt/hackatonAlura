@@ -1,5 +1,6 @@
 package com.alura.hackatonAlura.churn;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -233,5 +234,10 @@ public class ChurnService {
 
     public List<Prediction> topRiskPredictions() {
         return predictionRepository.findTop20ByOrderByProbabilidadDesc();
+    }
+
+    @Transactional
+    public void clearPredictions() {
+        predictionRepository.deleteAllPredictions();
     }
 }

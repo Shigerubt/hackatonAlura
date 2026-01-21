@@ -2,6 +2,7 @@ package com.alura.hackatonAlura.churn;
 
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +43,12 @@ public class ChurnController {
     @GetMapping("/predictions/top-risk")
     public List<Prediction> topRiskPredictions() {
         return churnService.topRiskPredictions();
+    }
+
+    @DeleteMapping("/predictions/clear")
+    public ResponseEntity<Void> clearPredictions() {
+        churnService.clearPredictions();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping(path = "/predict/batch", consumes = MediaType.APPLICATION_JSON_VALUE)
