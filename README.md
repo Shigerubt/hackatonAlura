@@ -134,6 +134,7 @@ API REST que recibe datos de cliente y devuelve predicción de churn y probabili
 Nota: `<project-root>` es la carpeta donde clonaste el proyecto (contiene `docker-compose.yml`). Ajusta la ruta según tu entorno.
 ```powershell
 cd <project-root>
+docker-compose up -d --build
 ./run.ps1 -Build
 ```
 - Levanta los servicios con Docker Compose, espera a que estén saludables, obtiene un JWT de admin y abre el dashboard.
@@ -204,7 +205,7 @@ docker compose up --build
 ## Dependencias y versiones
 - Java: JDK 17 (propiedad `java.version`)
 - Spring Boot: 3.4.12 (starters: web, validation, security, data-jpa)
-- Base de datos: H2 (runtime)
+- Base de datos: MySQL
 - Utilidades: Lombok (opcional), springdoc-openapi 2.6.0, commons-csv 1.12.0, JJWT 0.11.5
 - Testing: spring-boot-starter-test, spring-security-test
 - Data Science (microservicio): Flask 3.0.3
