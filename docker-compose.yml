@@ -30,7 +30,7 @@ services:
       retries: 5
 
   api:
-    build: .
+    build: ./backend
     ports:
       - "8080:8080"
     env_file:
@@ -40,6 +40,16 @@ services:
         condition: service_healthy
       ds:
         condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+    depends_on:
+      api:
+        condition: service_started
 
   dashboard:
     build: ./dashboard

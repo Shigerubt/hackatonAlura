@@ -86,30 +86,38 @@ public class ChurnService {
 
 
     public Map<String, Object> stats() {
-
         long total = predictionRepository.count();
         long churn = predictionRepository.countByPrevision("Va a cancelar");
         double tasa = total == 0 ? 0.0 : (double) churn / total;
 
-        Map<String, Long> riesgo = new HashMap<>();
-        riesgo.put("bajo", 0L);
-        riesgo.put("medio", 0L);
-        riesgo.put("alto", 0L);
+        Map<String, Long> porRiesgo = new HashMap<>();
+        porRiesgo.put("bajo", 0L);
+        porRiesgo.put("medio", 0L);
+        porRiesgo.put("alto", 0L);
 
         for (Object[] row : predictionRepository.countByRisk()) {
+            if (row[0] == null) continue;
             String r = ((String) row[0]).toLowerCase();
             Long c = ((Number) row[1]).longValue();
 
-            if (r.contains("alto")) riesgo.put("alto", c);
-            else if (r.contains("medio")) riesgo.put("medio", c);
-            else riesgo.put("bajo", c);
+            if (r.contains("alto")) porRiesgo.put("alto", c);
+            else if (r.contains("medio")) porRiesgo.put("medio", c);
+            else porRiesgo.put("bajo", c);
+        }
+
+        // Obtener última predicción para el dashboard
+        Instant ultima = Instant.now();
+        List<Prediction> tops = predictionRepository.findTop20ByOrderByProbabilidadDesc();
+        if (!tops.isEmpty()) {
+            ultima = tops.get(0).getCreatedAt();
         }
 
         return Map.of(
-                "total_evaluados", total,
-                "cancelaciones", churn,
+                "total_predicciones", total,
                 "tasa_churn", tasa,
-                "riesgo", riesgo
+                "por_riesgo", porRiesgo,
+                "ultima_prediccion", ultima,
+                "geografias", Map.of("Global", total) // Simplificado por ahora
         );
     }
 
