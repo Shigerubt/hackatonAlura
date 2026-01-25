@@ -75,9 +75,9 @@ public class ChurnService {
 
     private String getRiskLevel(ChurnPredictionResponse.PredictionInfo prediction) {
         double prob = prediction != null ? prediction.churn_probability : 0.0;
-        if (prob >= 0.66) {
+        if (prob >= 0.70) {
             return "alto";
-        } else if (prob >= 0.33) {
+        } else if (prob >= 0.50) {
             return "medio";
         } else {
             return "bajo";
@@ -87,7 +87,14 @@ public class ChurnService {
 
     public Map<String, Object> stats() {
         long total = predictionRepository.count();
-        long churn = predictionRepository.countByPrevision("Va a cancelar");
+        // Contar coincidencias con etiquetas comunes de churn ("Va a cancelar", "Yes", "True", "1")
+        long churn = predictionRepository.findAll().stream()
+                .filter(p -> p.getPrevision() != null && 
+                       (p.getPrevision().equalsIgnoreCase("Va a cancelar") || 
+                        p.getPrevision().equalsIgnoreCase("Yes") || 
+                        p.getPrevision().equalsIgnoreCase("True")))
+                .count();
+        
         double tasa = total == 0 ? 0.0 : (double) churn / total;
 
         Map<String, Long> porRiesgo = new HashMap<>();

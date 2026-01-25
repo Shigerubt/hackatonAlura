@@ -26,11 +26,11 @@ function Get-DockerPath {
 }
 
 function Compose {
-    param([string]$Docker, [string]$ComposeFile, [string[]]$Args)
+    param([string]$Docker, [string]$ComposeFile, [string[]]$CommandArgs)
     if ($Docker -eq "docker") {
-        & docker compose -f $ComposeFile @Args
+        & docker compose -f $ComposeFile @CommandArgs
     } else {
-        & $Docker compose -f $ComposeFile @Args
+        & $Docker compose -f $ComposeFile @CommandArgs
     }
 }
 
@@ -97,7 +97,7 @@ Write-Host "Starting containers via Docker Compose..." -ForegroundColor Cyan
 
 if ($NoCache) {
     Write-Host "Building images with --no-cache..." -ForegroundColor Cyan
-    Compose -Docker $docker -ComposeFile $composeFile -Args @("build", "--no-cache")
+    Compose -Docker $docker -ComposeFile $composeFile -CommandArgs @("build", "--no-cache")
 }
 
 $composeArgs = @("up", "-d")
@@ -105,7 +105,7 @@ if ($Build) {
     $composeArgs += "--build"
     $composeArgs += "--force-recreate"
 }
-Compose -Docker $docker -ComposeFile $composeFile -Args $composeArgs
+Compose -Docker $docker -ComposeFile $composeFile -CommandArgs $composeArgs
 
 Write-Host "Waiting for DS health (http://127.0.0.1:8000/health)..." -ForegroundColor Cyan
 $ds = Wait-HttpOk -Url "http://localhost:8000/health"

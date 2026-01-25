@@ -67,11 +67,11 @@ export default function Overview({ refreshKey }) {
             desc: 'Promedio de fuga predicha'
         },
         { 
-            label: 'Riesgo Alto', 
-            value: stats?.por_riesgo?.alto || 0, 
+            label: 'Casos a Cancelar', 
+            value: stats?.cancelaciones || 0, 
             icon: AlertTriangle, 
-            color: 'text-yellow-500', 
-            desc: 'Casos urgentes detectados'
+            color: 'text-alert-red', 
+            desc: 'Clientes con alta probabilidad de fuga'
         },
         { 
             label: 'Riesgo Bajo/Seguro', 
@@ -152,6 +152,7 @@ export default function Overview({ refreshKey }) {
                                         border: '1px solid #ffffff10',
                                         borderRadius: '12px'
                                     }}
+                                    itemStyle={{ color: '#ffffff' }}
                                 />
                                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                                     {riskData.map((entry, index) => (
@@ -188,6 +189,7 @@ export default function Overview({ refreshKey }) {
                                         border: '1px solid #ffffff10',
                                         borderRadius: '12px'
                                     }}
+                                    itemStyle={{ color: '#ffffff' }}
                                 />
                                 <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={40}>
                                     {churnVsContinueData.map((entry, index) => (
