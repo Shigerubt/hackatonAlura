@@ -9,6 +9,8 @@ import insightBot from '../assets/insight-bot.png';
 import hugoImg from '../assets/team/Hugo.jpg';
 import gabrielImg from '../assets/team/Gabriel.jpeg';
 import roxiImg from '../assets/team/Roxi.jpeg';
+import aguedaImg from '../assets/team/Agueda.jpeg';
+import kevinImg from '../assets/team/Kevin.jpeg';
 
 export function OperatingBrainSection() {
     return (
@@ -181,6 +183,7 @@ export function TeamSection() {
         { 
             name: "Agueda J. Guzman", 
             role: "Backend Manager", 
+            image: aguedaImg,
             linkedin: "https://www.linkedin.com/in/agueda-guzman-talavera-42a2a242a5" 
         },
         { 
@@ -213,6 +216,7 @@ export function TeamSection() {
         { 
             name: "Kevin S. Morales", 
             role: "Backend Engineer", 
+            image: kevinImg,
             linkedin: "https://www.linkedin.com/in/kevin-morales-6431b72a2" 
         },
     ];
