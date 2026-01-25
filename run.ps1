@@ -137,8 +137,9 @@ $headers = @{ Authorization = "Bearer $token" }
 $api = Wait-HttpOk -Url "http://127.0.0.1:8080/actuator/health" -Headers $headers
 Write-Host "API status: $($api.status)" -ForegroundColor Green
 
-Write-Host "Opening dashboard at http://localhost:8501" -ForegroundColor Cyan
+Write-Host "Opening dashboard and frontend..." -ForegroundColor Cyan
 Start-Process "http://localhost:8501"
+Start-Process "http://localhost:5173"
 
 Write-Host "Done. Containers are running. Use 'docker compose ps' and 'docker compose logs -f' for status/logs." -ForegroundColor Green
 Pop-Location
