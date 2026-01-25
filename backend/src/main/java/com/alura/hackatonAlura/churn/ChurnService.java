@@ -112,13 +112,16 @@ public class ChurnService {
             ultima = tops.get(0).getCreatedAt();
         }
 
-        return Map.of(
-                "total_predicciones", total,
-                "tasa_churn", tasa,
-                "por_riesgo", porRiesgo,
-                "ultima_prediccion", ultima,
-                "geografias", Map.of("Global", total) // Simplificado por ahora
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("total_predicciones", total);
+        result.put("total_evaluados", total);
+        result.put("cancelaciones", churn);
+        result.put("tasa_churn", tasa);
+        result.put("por_riesgo", porRiesgo);
+        result.put("ultima_prediccion", ultima);
+        result.put("geografias", Map.of("Global", total));
+
+        return result;
     }
 
 
