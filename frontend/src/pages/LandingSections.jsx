@@ -11,6 +11,7 @@ import gabrielImg from '../assets/team/Gabriel.jpeg';
 import roxiImg from '../assets/team/Roxi.jpeg';
 import aguedaImg from '../assets/team/Agueda.jpeg';
 import kevinImg from '../assets/team/Kevin.jpeg';
+import jhonImg from '../assets/team/Jhon.jpeg';
 
 export function OperatingBrainSection() {
     return (
@@ -189,6 +190,7 @@ export function TeamSection() {
         { 
             name: "Jhon A. Alonzo Huamán", 
             role: "DS Strategy Manager", 
+            image: jhonImg,
             linkedin: "https://www.linkedin.com/in/jalonzoh/" 
         },
         { 
