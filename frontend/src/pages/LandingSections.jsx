@@ -5,6 +5,11 @@ import { Button } from '../components/ui/Button';
 import { Terminal, Cpu, Database, Network, TrendingUp, Users, ArrowRight, Github, Linkedin, CalendarCheck, Code2, Lock, Zap, ChevronDown, Activity, Server, Scale } from 'lucide-react';
 import insightBot from '../assets/insight-bot.png';
 
+// Import team images
+import hugoImg from '../assets/team/Hugo.jpg';
+import gabrielImg from '../assets/team/Gabriel.jpeg';
+import roxiImg from '../assets/team/Roxi.jpeg';
+
 export function OperatingBrainSection() {
     return (
         <section className="relative py-24 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
@@ -169,6 +174,7 @@ export function TeamSection() {
         { 
             name: "Hugo Arias", 
             role: "Project Manager & Backend Lead", 
+            image: hugoImg,
             linkedin: "https://www.linkedin.com/in/shigerubt/",
             github: "https://github.com/shigerubt"
         },
@@ -190,11 +196,13 @@ export function TeamSection() {
         { 
             name: "Gabriel Franco", 
             role: "Data Scientist", 
+            image: gabrielImg,
             linkedin: "https://www.linkedin.com/in/lgab/" 
         },
         { 
             name: "Roxana Z. Bautista", 
             role: "Backend Engineer", 
+            image: roxiImg,
             linkedin: "https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/" 
         },
         { 
@@ -221,7 +229,11 @@ export function TeamSection() {
                     {team.map((member, idx) => (
                         <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
                             <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors">
-                                <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
+                                {member.image ? (
+                                    <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
+                                )}
                             </div>
                             <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center">{member.name}</h3>
                             <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono">{member.role}</p>
