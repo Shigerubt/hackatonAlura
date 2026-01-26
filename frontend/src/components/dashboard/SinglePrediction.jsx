@@ -138,10 +138,14 @@ export default function SinglePrediction({ onPredictionSuccess }) {
                                                 name={field.name}
                                                 value={formData[field.name]}
                                                 onChange={handleChange}
-                                                className="w-full bg-black/40 border border-white/10 rounded-lg py-2 px-3 text-sm text-white outline-none focus:border-neon-cyan transition-all appearance-none cursor-pointer"
+                                                className="w-full bg-navy-deep border border-white/10 rounded-lg py-2 px-3 text-sm text-white outline-none focus:border-neon-cyan transition-all appearance-none cursor-pointer"
                                             >
                                                 {field.options.map(opt => (
-                                                    <option key={typeof opt === 'object' ? opt.v : opt} value={typeof opt === 'object' ? opt.v : opt}>
+                                                    <option 
+                                                        key={typeof opt === 'object' ? opt.v : opt} 
+                                                        value={typeof opt === 'object' ? opt.v : opt}
+                                                        className="bg-navy-deep text-white"
+                                                    >
                                                         {typeof opt === 'object' ? opt.l : opt}
                                                     </option>
                                                 ))}
