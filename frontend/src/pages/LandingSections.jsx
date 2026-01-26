@@ -12,6 +12,8 @@ import roxiImg from '../assets/team/Roxi.jpeg';
 import aguedaImg from '../assets/team/Agueda.jpeg';
 import kevinImg from '../assets/team/Kevin.jpeg';
 import jhonImg from '../assets/team/Jhon.jpeg';
+import heribertoImg from '../assets/team/Heriberto.jpg';
+import vaneImg from '../assets/team/Vane.jpeg';
 
 export function OperatingBrainSection() {
     return (
@@ -185,7 +187,7 @@ export function TeamSection() {
             name: "Agueda J. Guzman", 
             role: "Backend Manager", 
             image: aguedaImg,
-            linkedin: "https://www.linkedin.com/in/agueda-guzman-talavera-42a2a242a5" 
+            linkedin: "https://www.linkedin.com/in/agueda-talavera-42a2a42a5/" 
         },
         { 
             name: "Jhon A. Alonzo Huamán", 
@@ -196,6 +198,7 @@ export function TeamSection() {
         { 
             name: "Heriberto Turpo Quiro", 
             role: "Data Scientist", 
+            image: heribertoImg,
             linkedin: "https://www.linkedin.com/in/heriberto-turpo-quiro/" 
         },
         { 
@@ -213,7 +216,8 @@ export function TeamSection() {
         { 
             name: "Vanessa S. Angulo", 
             role: "Backend Engineer", 
-            linkedin: "https://www.linkedin.com/in/vanessasangulose" 
+            image: vaneImg,
+            linkedin: "https://www.linkedin.com/in/vanessaangulose/" 
         },
         { 
             name: "Kevin S. Morales", 
