@@ -89,4 +89,12 @@ public class UserProfileController {
         userService.deleteUser(id, auth.getName());
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar usuario por Admin", description = "Actualiza email y nombre de cualquier usuario.")
+    public ResponseEntity<UserResponse> updateById(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest req) {
+        UserResponse res = userService.updateProfile(id.toString(), req);
+        return ResponseEntity.ok(res);
+    }
 }

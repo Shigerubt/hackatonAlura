@@ -5,10 +5,11 @@ import ResultsTable from '../components/dashboard/ResultsTable';
 import InsightPanel from '../components/dashboard/InsightPanel';
 import Overview from '../components/dashboard/Overview';
 import SinglePrediction from '../components/dashboard/SinglePrediction';
+import Settings from '../components/dashboard/Settings';
 import { AnimatePresence, motion } from 'framer-motion';
 
-export default function Dashboard({ onBack, onLogout, user }) {
-    const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'batch' | 'single'
+export default function Dashboard({ onBack, onLogout, user, onProfileUpdate }) {
+    const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'batch' | 'single' | 'settings'
     const [viewState, setViewState] = useState('upload'); // 'upload' | 'results'
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [results, setResults] = useState(null);
@@ -133,9 +134,7 @@ export default function Dashboard({ onBack, onLogout, user }) {
                             )}
 
                             {activeTab === 'settings' && (
-                                <div className="flex items-center justify-center h-[60vh] text-gray-500">
-                                    <p>Módulo de configuración en construcción</p>
-                                </div>
+                                <Settings user={user} onProfileUpdate={onProfileUpdate} />
                             )}
                         </motion.div>
                     </AnimatePresence>

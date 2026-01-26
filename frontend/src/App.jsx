@@ -81,6 +81,7 @@ function App() {
                     user={user}
                     onBack={() => setCurrentView('landing')} 
                     onLogout={handleLogout}
+                    onProfileUpdate={(updatedUser) => setUser(updatedUser)}
                 />
             )}
         </div>

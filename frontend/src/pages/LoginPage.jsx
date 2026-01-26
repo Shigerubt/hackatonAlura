@@ -118,7 +118,7 @@ export default function LoginPage({ onLogin, onBack }) {
                                     required
                                 />
                             </div>
-                            <p className="text-[10px] text-gray-500 ml-2">Ej: Hugo Arias</p>
+                            <p className="text-[10px] text-gray-400 ml-2 italic">Nota: Las cuentas nuevas se crean con rol de Analista (USER) por seguridad.</p>
                         </div>
                     )}
 

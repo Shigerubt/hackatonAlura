@@ -37,6 +37,9 @@ public class AuthService {
         user.setEmail(emailLower);
         user.setPasswordHash(hashed);
         user.setFullName(request.fullName());
+        
+        // Security Rule: Public registrations ALWAYS default to USER role.
+        // Only existing ADMINs can promote other users or create new ADMINs.
         user.setRoles(Role.USER);
 
         if (auth != null && auth.getAuthorities() != null) {
