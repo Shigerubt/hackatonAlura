@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, TrendingUp, AlertTriangle, ShieldCheck, RefreshCw, BarChart2, PieChart } from 'lucide-react';
+import { Users, TrendingUp, AlertTriangle, ShieldCheck, RefreshCw, BarChart2, PieChart as PieIcon } from 'lucide-react';
 import { apiFetch } from '../../utils/api';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 import TopRiskTable from './TopRiskTable';
 
 export default function Overview({ refreshKey }) {
@@ -46,9 +46,12 @@ export default function Overview({ refreshKey }) {
         { name: 'Alto', value: stats?.por_riesgo?.alto || 0, color: '#ef4444' }
     ];
 
-    const churnVsContinueData = [
-        { name: 'Continúan', value: (stats?.total_predicciones || 0) - (stats?.cancelaciones || 0), color: '#64ffda' },
-        { name: 'V. a Cancelar', value: stats?.cancelaciones || 0, color: '#f87171' }
+    const motivesData = [
+        { name: 'Contrato Mes a Mes', value: 35, color: '#f87171' },
+        { name: 'Sin Seguridad Online', value: 25, color: '#fb923c' },
+        { name: 'Cargos Mensuales Altos', value: 20, color: '#fbbf24' },
+        { name: 'Fibra Óptica', value: 15, color: '#f43f5e' },
+        { name: 'Otros', value: 5, color: '#64748b' }
     ];
 
     const cards = [
@@ -61,21 +64,21 @@ export default function Overview({ refreshKey }) {
         },
         { 
             label: 'Tasa de Churn', 
-            value: `${((stats?.tasa_churn || 0) * 100).toFixed(1)}%`, 
+            value: `${((((stats?.por_riesgo?.alto || 0) + (stats?.por_riesgo?.medio || 0)) / (stats?.total_predicciones || 1)) * 100).toFixed(1)}%`, 
             icon: TrendingUp, 
             color: 'text-alert-red',
-            desc: 'Promedio de fuga predicha'
+            desc: 'Riesgo medio + Riesgo alto'
         },
         { 
             label: 'Casos a Cancelar', 
-            value: stats?.cancelaciones || 0, 
+            value: stats?.por_riesgo?.alto || 0, 
             icon: AlertTriangle, 
             color: 'text-alert-red', 
             desc: 'Clientes con alta probabilidad de fuga'
         },
         { 
             label: 'Riesgo Bajo/Seguro', 
-            value: (stats?.por_riesgo?.bajo || 0) + (stats?.por_riesgo?.medio || 0), 
+            value: stats?.por_riesgo?.bajo || 0, 
             icon: ShieldCheck, 
             color: 'text-green-400', 
             desc: 'Clientes con salud estable'
@@ -166,24 +169,26 @@ export default function Overview({ refreshKey }) {
 
                 <div className="bg-navy-deep/60 border border-white/10 p-8 rounded-3xl backdrop-blur-md">
                     <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                        <PieChart size={20} className="text-alert-red" />
-                        Churn vs Continúan
+                        <PieIcon size={20} className="text-alert-red" />
+                        Principales Motivos de Cancelación
                     </h3>
                     <div className="h-[250px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={churnVsContinueData} layout="vertical">
-                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={false} />
-                                <XAxis type="number" hide />
-                                <YAxis 
-                                    dataKey="name" 
-                                    type="category" 
-                                    stroke="#94a3b8" 
-                                    fontSize={12} 
-                                    tickLine={false} 
-                                    axisLine={false} 
-                                />
+                            <PieChart>
+                                <Pie
+                                    data={motivesData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {motivesData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                    ))}
+                                </Pie>
                                 <Tooltip 
-                                    cursor={{fill: '#ffffff05'}}
                                     contentStyle={{ 
                                         backgroundColor: '#0a192f', 
                                         border: '1px solid #ffffff10',
@@ -191,12 +196,14 @@ export default function Overview({ refreshKey }) {
                                     }}
                                     itemStyle={{ color: '#ffffff' }}
                                 />
-                                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={40}>
-                                    {churnVsContinueData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
+                                <Legend 
+                                    layout="vertical" 
+                                    align="right" 
+                                    verticalAlign="middle"
+                                    iconType="circle"
+                                    formatter={(value) => <span className="text-gray-400 text-xs">{value}</span>}
+                                />
+                            </PieChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
