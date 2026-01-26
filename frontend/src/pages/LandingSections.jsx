@@ -446,7 +446,10 @@ export function CtaSection() {
                     Churn Alert traduce el silencio de tus datos en acciones de rescate inmediatas.
                 </p>
 
-                <Button className="mx-auto text-xl px-12 py-6 h-auto shadow-[0_0_50px_rgba(100,255,218,0.2)] hover:shadow-[0_0_80px_rgba(100,255,218,0.4)]">
+                <Button 
+                    onClick={() => alert("¡Simulación finalizada! Agradecemos profundamente a Alura Latam y Oracle por la oportunidad otorgada en este Hackathon.")}
+                    className="mx-auto text-xl px-12 py-6 h-auto shadow-[0_0_50px_rgba(100,255,218,0.2)] hover:shadow-[0_0_80px_rgba(100,255,218,0.4)]"
+                >
                     <CalendarCheck className="mr-3" />
                     Reserva una Sesión Estratégica
                 </Button>
