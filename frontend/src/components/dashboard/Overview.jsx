@@ -72,9 +72,11 @@ export default function Overview({ refreshKey }) {
         { 
             label: 'Casos a Cancelar', 
             value: stats?.por_riesgo?.alto || 0, 
+            subValue: stats?.por_riesgo?.medio || 0,
+            subLabel: 'Riesgo Medio',
             icon: AlertTriangle, 
             color: 'text-alert-red', 
-            desc: 'Clientes con alta probabilidad de fuga'
+            desc: 'Comparativa de posibles cancelaciones'
         },
         { 
             label: 'Riesgo Bajo/Seguro', 
@@ -116,9 +118,26 @@ export default function Overview({ refreshKey }) {
                                 <card.icon size={24} />
                             </div>
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-1">
-                            {loading ? '...' : card.value}
-                        </h3>
+                        <div className="flex items-baseline gap-3 mb-1">
+                            <div className="flex flex-col">
+                                <h3 className="text-3xl font-bold text-white leading-none">
+                                    {loading ? '...' : card.value}
+                                </h3>
+                                {card.subValue !== undefined && !loading && (
+                                    <span className="text-[8px] text-alert-red font-bold uppercase mt-1 tracking-tighter">Critico / Alto</span>
+                                )}
+                            </div>
+                            {card.subValue !== undefined && !loading && (
+                                <div className="flex flex-col border-l border-white/10 pl-3">
+                                    <span className="text-xl font-bold text-orange-400 leading-none">
+                                        {card.subValue}
+                                    </span>
+                                    <span className="text-[8px] text-gray-500 uppercase mt-1 tracking-tighter">
+                                        {card.subLabel}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                         <p className="text-gray-400 text-sm font-medium">{card.label}</p>
                         <p className="text-[10px] text-gray-600 mt-2 uppercase tracking-widest">{card.desc}</p>
                     </motion.div>
