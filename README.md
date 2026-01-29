@@ -1,4 +1,5 @@
 # Churn Alert
+Este proyecto busca predecir la probabilidad de que un cliente cancele su servicio, ayudando a la empresa a retener clientes de alto riesgo.
 
 ## Objetivo
 API REST que recibe datos de cliente y devuelve predicción de churn y probabilidad. Integra con un microservicio de Data Science (DS).
