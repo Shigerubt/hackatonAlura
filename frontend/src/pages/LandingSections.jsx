@@ -2,128 +2,171 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Terminal, Cpu, Database, Network, TrendingUp, Users, ArrowRight, Github, Linkedin, CalendarCheck, Code2, Lock, Zap, ChevronDown, Activity, Server, Scale } from 'lucide-react';
+import { Terminal, Cpu, Database, Network, TrendingUp, Users, ArrowRight, Github, Linkedin, CalendarCheck, Code2, Lock, Zap, ChevronDown, Activity, Server, Scale, Mic } from 'lucide-react';
+import { 
+    SiPython, SiFlask, SiScikitlearn, SiPandas, SiOpenjdk, SiSpring, SiOpenapiinitiative, SiDocker, 
+    SiReact, SiVite, SiTailwindcss, SiFramer, SiMysql, SiApachemaven, SiStreamlit, SiPostman, SiInsomnia, SiSwagger, SiMondaydotcom 
+} from 'react-icons/si';
 import insightBot from '../assets/insight-bot.png';
 
-// Import team images
-import hugoImg from '../assets/team/Hugo.jpg';
-import gabrielImg from '../assets/team/Gabriel.jpeg';
-import roxiImg from '../assets/team/Roxi.jpeg';
-import aguedaImg from '../assets/team/Agueda.jpeg';
-import kevinImg from '../assets/team/Kevin.jpeg';
-import jhonImg from '../assets/team/Jhon.jpeg';
-import heribertoImg from '../assets/team/Heriberto.jpg';
-import vaneImg from '../assets/team/Vane.jpeg';
+// Minimal SVG flags (approximate) for team nationality badges
+function FlagIcon({ code, size = 16 }) {
+    const w = size;
+    const h = Math.round(size * 0.75);
+    switch (code) {
+        case 'GT': // Guatemala (blue-white-blue)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Guatemala flag">
+                    <rect width="1" height="2" x="0" y="0" fill="#4997D0" />
+                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+                    <rect width="1" height="2" x="2" y="0" fill="#4997D0" />
+                </svg>
+            );
+        case 'MX': // Mexico (green-white-red)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Mexico flag">
+                    <rect width="1" height="2" x="0" y="0" fill="#006847" />
+                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+                    <rect width="1" height="2" x="2" y="0" fill="#CE1126" />
+                </svg>
+            );
+        case 'PE': // Peru (red-white-red)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Peru flag">
+                    <rect width="1" height="2" x="0" y="0" fill="#D91023" />
+                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+                    <rect width="1" height="2" x="2" y="0" fill="#D91023" />
+                </svg>
+            );
+        case 'CO': // Colombia (yellow-blue-red)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Colombia flag">
+                    <rect width="3" height="1" x="0" y="0" fill="#FCD116" />
+                    <rect width="3" height="0.5" x="0" y="1" fill="#003893" />
+                    <rect width="3" height="0.5" x="0" y="1.5" fill="#CE1126" />
+                </svg>
+            );
+        export function TeamSection() {
+            const team = [
+                {
+                    name: "Hugo Arias",
+                    role: "Project Manager & Backend Lead",
+                    image: hugoImg,
+                    linkedin: "https://www.linkedin.com/in/shigerubt/",
+                    github: "https://github.com/shigerubt",
+                    flagCode: "GT",
+                },
+                {
+                    name: "Agueda J. Guzman",
+                    role: "Backend Manager",
+                    image: aguedaImg,
+                    linkedin: "https://www.linkedin.com/in/agueda-talavera-42a2a42a5/",
+                    flagCode: "MX",
+                },
+                {
+                    name: "Jhon A. Alonzo Huamán",
+                    role: "DS Strategy Manager",
+                    image: jhonImg,
+                    linkedin: "https://www.linkedin.com/in/jalonzoh/",
+                    flagCode: "PE",
+                },
+                {
+                    name: "Heriberto Turpo Quiro",
+                    role: "Data Scientist",
+                    image: heribertoImg,
+                    linkedin: "https://www.linkedin.com/in/heriberto-turpo-quiro/",
+                    flagCode: "PE",
+                },
+                {
+                    name: "Gabriel Franco",
+                    role: "Pitch Speaker",
+                    image: gabrielImg,
+                    linkedin: "https://www.linkedin.com/in/lgab/",
+                    flagCode: "CO",
+                },
+                {
+                    name: "Roxana Z. Bautista",
+                    role: "Backend Engineer",
+                    image: roxiImg,
+                    linkedin: "https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/",
+                    flagCode: "MX",
+                },
+                {
+                    name: "Vanessa S. Angulo",
+                    role: "Backend Engineer",
+                    image: vaneImg,
+                    linkedin: "https://www.linkedin.com/in/vanessaangulose/",
+                    flagCode: "MX",
+                },
+                {
+                    name: "Kevin S. Morales",
+                    role: "Backend Engineer",
+                    image: kevinImg,
+                    linkedin: "https://www.linkedin.com/in/kevin-morales-6431b72a2",
+                    flagCode: "CO",
+                },
+            ];
 
-export function OperatingBrainSection() {
-    return (
-        <section className="relative py-24 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1 space-y-6 z-10">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 text-neon-cyan text-xs font-mono uppercase tracking-widest border border-neon-cyan/20">
-                    <Cpu size={14} />
-                    <span>Comando Central v1.00</span>
-                </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                    El Cerebro Operativo: <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-blue-500">Insight-Bot</span>
-                </h2>
-                <p className="text-gray-400 text-lg leading-relaxed max-w-xl">
-                    No es solo un modelo de datos; es un agente que interpreta patrones de comportamiento humano.
-                    Analiza variables de uso, pagos y satisfacción en milisegundos para entregarte una hoja de ruta de rescate.
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-500 font-mono">
-                    <span className="flex items-center gap-2"><div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" /> Sistema Online</span>
-                    <span className="flex items-center gap-2"><div className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" /> Procesando Datos</span>
-                </div>
-            </div>
-
-            <div className="flex-1 relative flex justify-center">
-                {/* Scanning Effect Container */}
-                <div className="relative w-[300px] md:w-[400px] h-[400px]">
-                    <motion.div
-                        animate={{
-                            boxShadow: ["0 0 20px rgba(100,255,218,0.2)", "0 0 50px rgba(100,255,218,0.4)", "0 0 20px rgba(100,255,218,0.2)"]
-                        }}
-                        transition={{ duration: 3, repeat: Infinity }}
-                        className="absolute inset-0 rounded-full bg-gradient-to-b from-neon-cyan/5 to-transparent blur-3xl"
-                    />
-                    <img src={insightBot} alt="Insight Bot" className="relative z-10 w-full h-full object-contain drop-shadow-[0_0_30px_rgba(100,255,218,0.3)]" />
-
-                    {/* Scanning Line */}
-                    <motion.div
-                        initial={{ top: "10%", opacity: 0 }}
-                        animate={{ top: "90%", opacity: [0, 1, 0] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        className="absolute left-0 right-0 h-[2px] bg-neon-cyan shadow-[0_0_15px_#64ffda] z-20"
-                    />
-
-                    {/* Floating Data Particles */}
-                    <div className="absolute top-1/2 left-[-20%] p-3 bg-navy-deep/90 border border-neon-cyan/30 rounded-lg backdrop-blur-md shadow-xl z-20">
-                        <div className="text-xs text-neon-cyan font-mono">Risk: High</div>
-                        <div className="text-[10px] text-gray-400">ID: 94821</div>
-                    </div>
-                    <div className="absolute bottom-[20%] right-[-10%] p-3 bg-navy-deep/90 border border-alert-red/30 rounded-lg backdrop-blur-md shadow-xl z-20">
-                        <div className="text-xs text-alert-red font-mono">Churn: 92%</div>
-                        <div className="text-[10px] text-gray-400">Alert Sent</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-export function ApiIntegrationSection() {
-    return (
-        <section className="bg-navy-deep/50 border-y border-white/5 py-24 px-6 md:px-0">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                <div className="order-2 md:order-1 relative">
-                    <div className="absolute inset-0 bg-neon-cyan/5 blur-3xl rounded-full" />
-                    <Card className="relative bg-[#0a0f1c] border-white/10 p-0 overflow-hidden shadow-2xl">
-                        <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/5">
-                            <div className="w-3 h-3 rounded-full bg-red-500" />
-                            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                            <div className="w-3 h-3 rounded-full bg-green-500" />
-                            <div className="ml-2 text-xs text-gray-400 font-mono">api-integration.js</div>
+            return (
+                <section className="py-24 px-6 border-t border-white/5 bg-navy-deep">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-bold text-white mb-4">Meet the Sentinels</h2>
+                            <p className="text-gray-400">Los arquitectos detrás de la predicción y los guardianes de la retención.</p>
                         </div>
-                        <div className="p-6 font-mono text-sm text-gray-300 overflow-x-auto">
-                            <pre>
-                                <span className="text-purple-400">const</span> <span className="text-blue-400">churnAlert</span> = <span className="text-purple-400">new</span> <span className="text-yellow-400">Predictor</span>({'{'}
-                                apiKey: <span className="text-green-400">"sk_live_..."</span>,
-                                model: <span className="text-green-400">"v2.0-turbo"</span>
-                                {'}'});
 
-                                <span className="text-gray-500">// Real-time prediction</span>
-                                <span className="text-purple-400">const</span> <span className="text-blue-400">risk</span> = <span className="text-purple-400">await</span> <span className="text-blue-400">churnAlert</span>.<span className="text-yellow-400">analyze</span>({'{'}
-                                userId: <span className="text-green-400">"usr_123"</span>,
-                                signals: [<span className="text-green-400">"late_payment"</span>, <span className="text-green-400">"ticket_volume"</span>]
-                                {'}'});
-
-                                <span className="text-blue-400">console</span>.<span className="text-yellow-400">log</span>(<span className="text-blue-400">risk</span>.score); <span className="text-gray-500">// 0.94</span>
-                            </pre>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {team.map((member, idx) => (
+                                <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
+                                    <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors relative">
+                                        {member.image ? (
+                                            <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
+                                        )}
+                                        {member.role === 'Pitch Speaker' && (
+                                            <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white/10 border border-neon-cyan/40 text-neon-cyan shadow">
+                                                <Mic size={12} />
+                                            </span>
+                                        )}
+                                    </div>
+                                    <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center gap-2">
+                                        <span>{member.name}</span>
+                                        {member.flagCode && (
+                                            <span className="inline-flex items-center"><FlagIcon code={member.flagCode} size={14} /></span>
+                                        )}
+                                    </h3>
+                                    <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono flex items-center justify-center gap-1">
+                                        {member.role === 'Pitch Speaker' && <Mic size={12} className="text-neon-cyan" />}
+                                        <span>{member.role === 'Pitch Speaker' ? 'Data Scientist • Pitch Speaker' : member.role}</span>
+                                    </p>
+                                    <div className="flex justify-center gap-4 text-gray-400">
+                                        {member.github && (
+                                            <a href={member.github} target="_blank" rel="noopener noreferrer">
+                                                <Github size={16} className="hover:text-white transition-colors" />
+                                            </a>
+                                        )}
+                                        {member.linkedin && (
+                                            <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                                                <Linkedin size={16} className="hover:text-white transition-colors" />
+                                            </a>
+                                        )}
+                                    </div>
+                                </Card>
+                            ))}
                         </div>
-                    </Card>
-                </div>
 
-                <div className="order-1 md:order-2 space-y-8">
-                    <h2 className="text-4xl font-bold text-white">
-                        Poder Predictivo, <br />
-                        <span className="text-gray-500">vía JSON.</span>
-                    </h2>
-                    <p className="text-lg text-gray-400">
-                        Implementa nuestra API de forma nativa en tu CRM, ERP o App móvil.
-                        Documentación robusta para integraciones en Java, Python y Node.js.
-                        El cliente no tiene que cambiar su forma de trabajar.
-                    </p>
-                    <ul className="space-y-4">
-                        <li className="flex items-center gap-3 text-gray-300">
-                            <div className="p-2 rounded bg-neon-cyan/10 text-neon-cyan"><Zap size={18} /></div>
-                            <span>Latencia mínima (&#60;50ms)</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-gray-300">
-                            <div className="p-2 rounded bg-neon-cyan/10 text-neon-cyan"><Lock size={18} /></div>
-                            <span>Seguridad end-to-end (AES-256)</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-gray-300">
+                        {/* Monday.com CTA moved to InsideTheMachineSection */}
+                    </div>
+                </section>
+            );
+        }
+
+        export function InsideTheMachineSection() {
+            const [isOpen, setIsOpen] = useState(false);
+            return (
+                <section className="relative px-6">
+                    <div className="max-w-7xl mx-auto flex flex-col items-center">
                             <div className="p-2 rounded bg-neon-cyan/10 text-neon-cyan"><Code2 size={18} /></div>
                             <span>Zero-downtime integration</span>
                         </li>
@@ -181,72 +224,91 @@ export function TeamSection() {
             role: "Project Manager & Backend Lead", 
             image: hugoImg,
             linkedin: "https://www.linkedin.com/in/shigerubt/",
-            github: "https://github.com/shigerubt"
+            github: "https://github.com/shigerubt",
+            flagCode: "GT"
         },
         { 
             name: "Agueda J. Guzman", 
             role: "Backend Manager", 
             image: aguedaImg,
-            linkedin: "https://www.linkedin.com/in/agueda-talavera-42a2a42a5/" 
+            linkedin: "https://www.linkedin.com/in/agueda-talavera-42a2a42a5/", 
+            flagCode: "MX"
         },
         { 
             name: "Jhon A. Alonzo Huamán", 
             role: "DS Strategy Manager", 
             image: jhonImg,
-            linkedin: "https://www.linkedin.com/in/jalonzoh/" 
+            linkedin: "https://www.linkedin.com/in/jalonzoh/", 
+            flagCode: "PE"
         },
         { 
             name: "Heriberto Turpo Quiro", 
             role: "Data Scientist", 
             image: heribertoImg,
-            linkedin: "https://www.linkedin.com/in/heriberto-turpo-quiro/" 
+            linkedin: "https://www.linkedin.com/in/heriberto-turpo-quiro/", 
+            flagCode: "PE"
         },
         { 
             name: "Gabriel Franco", 
-            role: "Data Scientist", 
+            role: "Pitch Speaker", 
             image: gabrielImg,
-            linkedin: "https://www.linkedin.com/in/lgab/" 
+            linkedin: "https://www.linkedin.com/in/lgab/", 
+            flagCode: "CO"
         },
         { 
-            name: "Roxana Z. Bautista", 
+                flagCode: "GT",
             role: "Backend Engineer", 
             image: roxiImg,
-            linkedin: "https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/" 
+            linkedin: "https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/", 
+            flagCode: "MX"
         },
         { 
-            name: "Vanessa S. Angulo", 
+                flagCode: "MX",
             role: "Backend Engineer", 
             image: vaneImg,
-            linkedin: "https://www.linkedin.com/in/vanessaangulose/" 
+            linkedin: "https://www.linkedin.com/in/vanessaangulose/", 
+            flagCode: "MX"
         },
         { 
-            name: "Kevin S. Morales", 
+                flagCode: "PE",
             role: "Backend Engineer", 
             image: kevinImg,
-            linkedin: "https://www.linkedin.com/in/kevin-morales-6431b72a2" 
+            linkedin: "https://www.linkedin.com/in/kevin-morales-6431b72a2", 
+            flagCode: "CO"
         },
     ];
-
+                flagCode: "PE",
     return (
         <section className="py-24 px-6 border-t border-white/5 bg-navy-deep">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-bold text-white mb-4">Meet the Sentinels</h2>
                     <p className="text-gray-400">Los arquitectos detrás de la predicción y los guardianes de la retención.</p>
-                </div>
+                flagCode: "CO",
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {team.map((member, idx) => (
                         <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
-                            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors">
+                            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors relative">
                                 {member.image ? (
-                                    <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                flagCode: "MX",
                                 ) : (
                                     <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
                                 )}
+                                {member.role === 'Pitch Speaker' && (
+                                    <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white/10 border border-neon-cyan/40 text-neon-cyan shadow">
+                                        <Mic size={12} />
+                flagCode: "MX",
+                                )}
                             </div>
-                            <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center">{member.name}</h3>
-                            <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono">{member.role}</p>
+                            <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center gap-2">
+                                {member.name}
+                                {member.flagCode && <FlagIcon code={member.flagCode} />}
+                            </h3>
+                flagCode: "CO",
+                                {member.role === 'Pitch Speaker' && <Mic size={12} className="text-neon-cyan" />}
+                                <span>{member.role === 'Pitch Speaker' ? 'Data Scientist • Pitch Speaker' : member.role}</span>
+                            </p>
                             <div className="flex justify-center gap-4 text-gray-400">
                                 {member.github && (
                                     <a href={member.github} target="_blank" rel="noopener noreferrer">
@@ -269,7 +331,6 @@ export function TeamSection() {
 
 export function InsideTheMachineSection() {
     const [isOpen, setIsOpen] = useState(false);
-
     return (
         <section className="relative px-6">
             <div className="max-w-7xl mx-auto flex flex-col items-center">
@@ -290,7 +351,76 @@ export function InsideTheMachineSection() {
                                 {/* Background Tech Pattern */}
                                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent" />
 
+                                {/* Monday.com CTA at the top of collapsible content */}
+                                <div className="max-w-5xl mx-auto pt-6">
+                                    <div className="mb-8 flex justify-center">
+                                        <a
+                                            href="https://shigerubt.monday.com/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="Organización del equipo en Monday Dev"
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/10 text-gray-200 hover:text-white hover:border-neon-cyan/50 hover:shadow-[0_0_20px_rgba(100,255,218,0.2)] transition-colors bg-white/5"
+                                        >
+                                            <SiMondaydotcom className="text-[#1F9E8A]" size={18} />
+                                            <span className="text-sm font-medium">Organización del equipo en Monday Dev</span>
+                                            <ArrowRight size={14} className="opacity-70" />
+                                        </a>
+                                    </div>
+                                </div>
+
                                 <div className="max-w-5xl mx-auto space-y-20">
+                                    {/* Section 0: Introducción & Planteamiento */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.1 }}
+                                            className="space-y-6"
+                                        >
+                                            <div className="flex items-center gap-3 text-neon-cyan mb-2">
+                                                <Network size={24} />
+                                                <span className="font-mono text-sm tracking-widest uppercase">Contexto del Proyecto</span>
+                                            </div>
+                                            <h3 className="text-3xl font-bold text-white">Introducción & Planteamiento</h3>
+                                            <p className="text-gray-400 leading-relaxed">
+                                                Las empresas pierden clientes sin señales claras. El objetivo de <span className="text-white font-semibold">Churn Alert</span> es anticipar el abandono y activar acciones de retención con datos confiables y tiempos de respuesta mínimos.
+                                            </p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                                <div className="p-4 bg-white/5 rounded border border-white/10">
+                                                    <div className="flex items-center gap-2 text-alert-red mb-1"><Activity size={16} /><span className="font-mono text-xs uppercase">Problema</span></div>
+                                                    <p className="text-sm text-gray-300">Alta tasa de cancelación y señales dispersas; difícil detectar riesgo a tiempo.</p>
+                                                </div>
+                                                <div className="p-4 bg-white/5 rounded border border-white/10">
+                                                    <div className="flex items-center gap-2 text-neon-cyan mb-1"><TrendingUp size={16} /><span className="font-mono text-xs uppercase">Objetivo</span></div>
+                                                    <p className="text-sm text-gray-300">Predecir probabilidad de churn y clasificar riesgo para priorizar acciones.</p>
+                                                </div>
+                                                <div className="p-4 bg-white/5 rounded border border-white/10">
+                                                    <div className="flex items-center gap-2 text-blue-400 mb-1"><Cpu size={16} /><span className="font-mono text-xs uppercase">Abordaje</span></div>
+                                                    <p className="text-sm text-gray-300">Arquitectura desacoplada: DS en Python y API en Java; validación estricta y lotes CSV.</p>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: 0.2 }}
+                                        >
+                                            <Card className="bg-[#0a0f1c] p-6 border-white/10">
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center gap-2 text-gray-400 text-xs font-mono">
+                                                        <span>project_overview.md</span>
+                                                        <span className="ml-auto">v1.0</span>
+                                                    </div>
+                                                    <ul className="text-sm text-gray-300 space-y-2">
+                                                        <li className="flex items-center gap-2"><Lock size={14} className="text-neon-cyan" /><span>Endpoints protegidos con JWT</span></li>
+                                                        <li className="flex items-center gap-2"><Zap size={14} className="text-neon-cyan" /><span>Latencia baja y lote 7k+ registros</span></li>
+                                                        <li className="flex items-center gap-2"><Server size={14} className="text-alert-red" /><span>API Spring Boot + DS Flask</span></li>
+                                                    </ul>
+                                                </div>
+                                            </Card>
+                                        </motion.div>
+                                    </div>
 
                                     {/* Section 1: Data Pipeline */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -304,18 +434,18 @@ export function InsideTheMachineSection() {
                                                 <Scale size={24} />
                                                 <span className="font-mono text-sm tracking-widest uppercase">Análisis Técnico del Modelo</span>
                                             </div>
-                                            <h3 className="text-3xl font-bold text-white">Robust Scaling & Outlier Resilience</h3>
+                                            <h3 className="text-3xl font-bold text-white">XGBoost: Gradient Boosted Trees para Churn</h3>
                                             <p className="text-gray-400 leading-relaxed border-l-2 border-neon-cyan/20 pl-4">
-                                                La precisión de Churn Alert nace de un pipeline de datos sofisticado. Nuestro modelo integra un preprocesamiento avanzado que utiliza <span className="text-white font-semibold">Robust Scaling</span> para neutralizar el ruido en variables determinantes como <span className="font-mono text-sm bg-white/5 px-1 rounded">tenure</span> y <span className="font-mono text-sm bg-white/5 px-1 rounded">TotalCharges</span>.
+                                                El modelo final de <span className="text-white font-semibold">Churn Alert</span> es <span className="text-white font-semibold">XGBoost</span>, un ensamble de árboles potenciados por gradiente que corrige iterativamente errores. Captura relaciones no lineales e interacciones entre variables como <span className="font-mono text-sm bg-white/5 px-1 rounded">Contract</span>, <span className="font-mono text-sm bg-white/5 px-1 rounded">tenure</span> y <span className="font-mono text-sm bg-white/5 px-1 rounded">OnlineSecurity</span>, ofreciendo alta precisión en datos tabulares.
                                             </p>
                                             <p className="text-gray-400 leading-relaxed">
-                                                A diferencia de modelos estándar, nuestro modelo es resiliente a valores atípicos, permitiendo que la antigüedad del cliente y sus patrones de facturación se analicen con una escala de magnitud real. Esto garantiza que un pico inusual en los cargos mensuales no genere una falsa alarma, sino un análisis contextual preciso basado en el historial histórico del usuario.
+                                                La regularización (L1/L2), la profundidad máxima y el <em>learning rate</em> controlan la complejidad y reducen el sobreajuste. La importancia de variables se reporta vía <em>gain</em> y <em>cover</em>, guiando decisiones sobre los principales impulsores del churn.
                                             </p>
 
                                             <div className="p-4 bg-white/5 rounded-lg border border-white/5 backdrop-blur-sm">
                                                 <p className="text-sm text-gray-300 italic">
                                                     <span className="text-neon-cyan font-bold not-italic mr-2">Simple:</span>
-                                                    "Imagina que el modelo es un detective experto que ha visto miles de casos de abandono. No mira un solo dato, sino que conecta los puntos: si un cliente cambia su frecuencia de uso y además tiene un retraso en pago, el detective levanta la bandera roja antes de que el cliente decida irse."
+                                                    "Un comité de árboles donde cada nuevo árbol aprende de los errores del anterior; juntos votan una predicción más fuerte y precisa sobre el abandono."
                                                 </p>
                                             </div>
                                         </motion.div>
@@ -328,21 +458,21 @@ export function InsideTheMachineSection() {
                                             <Card className="bg-[#0a0f1c] p-6 border-neon-cyan/20">
                                                 <div className="space-y-4 font-mono text-xs">
                                                     <div className="flex justify-between text-gray-500 pb-2 border-b border-white/5">
-                                                        <span>FEATURE_IMPORTANCE_MAP</span>
-                                                        <span>v2.1</span>
+                                                        <span>XGBOOST_IMPORTANCE (gain)</span>
+                                                        <span>v3.0</span>
                                                     </div>
                                                     <div className="space-y-2">
                                                         <div>
-                                                            <div className="flex justify-between mb-1 text-gray-300"><span>TotalCharges</span> <span>0.98</span></div>
-                                                            <div className="h-1 bg-white/10 rounded-full overflow-hidden"><div className="h-full w-[98%] bg-neon-cyan" /></div>
+                                                            <div className="flex justify-between mb-1 text-gray-300"><span>Contract</span> <span>0.31</span></div>
+                                                            <div className="h-1 bg-white/10 rounded-full overflow-hidden"><div className="h-full w-[31%] bg-neon-cyan" /></div>
                                                         </div>
                                                         <div>
-                                                            <div className="flex justify-between mb-1 text-gray-300"><span>Tenure</span> <span>0.85</span></div>
-                                                            <div className="h-1 bg-white/10 rounded-full overflow-hidden"><div className="h-full w-[85%] bg-blue-500" /></div>
+                                                            <div className="flex justify-between mb-1 text-gray-300"><span>tenure</span> <span>0.27</span></div>
+                                                            <div className="h-1 bg-white/10 rounded-full overflow-hidden"><div className="h-full w-[27%] bg-blue-500" /></div>
                                                         </div>
                                                         <div>
-                                                            <div className="flex justify-between mb-1 text-gray-300"><span>MonthlyCharges</span> <span>0.72</span></div>
-                                                            <div className="h-1 bg-white/10 rounded-full overflow-hidden"><div className="h-full w-[72%] bg-purple-500" /></div>
+                                                            <div className="flex justify-between mb-1 text-gray-300"><span>OnlineSecurity</span> <span>0.18</span></div>
+                                                            <div className="h-1 bg-white/10 rounded-full overflow-hidden"><div className="h-full w-[18%] bg-purple-500" /></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -405,7 +535,14 @@ export function InsideTheMachineSection() {
                                                     "6 Sprints. 1 Meta. El equipo se organizó mediante una arquitectura desacoplada: mientras Data Science refinaba el cerebro (Python), Backend preparaba los nervios (Java API), permitiendo una integración nativa y escalable en tiempo récord."
                                                 </p>
                                             </div>
+
+                                            
                                         </motion.div>
+                                    </div>
+
+                                    {/* Section 3: Tecnologías del Proyecto (embebido) */}
+                                    <div className="pt-6">
+                                        <TechnologiesSection embedded />
                                     </div>
 
                                 </div>
@@ -453,6 +590,121 @@ export function CtaSection() {
                     <CalendarCheck className="mr-3" />
                     Reserva una Sesión Estratégica
                 </Button>
+            </div>
+        </section>
+    );
+}
+
+// Nueva sección: Tecnologías del Proyecto
+export function TechnologiesSection({ embedded = false }) {
+    const categories = [
+        {
+            name: 'Data Science',
+            color: 'text-neon-cyan',
+            icon: <Cpu size={18} />,
+            items: [
+                { t: 'Python 3.10+', d: 'Lenguaje base del microservicio DS; prototipa y despliega modelos rápidamente.', Icon: SiPython },
+                { t: 'Flask 3', d: 'Microframework que expone el modelo vía HTTP con rutas ligeras y mantenibles.', Icon: SiFlask },
+                { t: 'scikit-learn', d: 'Entrenamiento, métricas y pipelines reproducibles para datos tabulares.', Icon: SiScikitlearn },
+                { t: 'pandas', d: 'Procesa y valida las 20 variables canónicas con operaciones vectorizadas.', Icon: SiPandas },
+                { t: 'XGBoost', d: 'Modelo eficiente y preciso para clasificación con explicabilidad básica.' },
+                { t: 'joblib', d: 'Serializa el pipeline para cargar en producción sin reentrenar.' },
+            ],
+        },
+        {
+            name: 'Backend',
+            color: 'text-alert-red',
+            icon: <Server size={18} />,
+            items: [
+                { t: 'Java 17', d: 'LTS estable y performante; base de la API con mejoras modernas de GC.', Icon: SiOpenjdk },
+                { t: 'Spring Boot 3', d: 'Arranque rápido, configuración mínima y observabilidad integrada.', Icon: SiSpring },
+                { t: 'Spring Security', d: 'Protege endpoints con JWT y reglas de autorización claras.', Icon: SiSpring },
+                { t: 'Spring Data JPA', d: 'Persistencia con repositorios declarativos para auditoría de predicciones.', Icon: SiSpring },
+                { t: 'Validation', d: 'Ergonomía para errores 400 claros y por campo en requests.', Icon: SiSpring },
+                { t: 'OpenAPI (springdoc)', d: 'Swagger UI para documentación viva y pruebas manuales.', Icon: SiOpenapiinitiative },
+                { t: 'Swagger UI', d: 'Explora y prueba endpoints desde el navegador con UI interactiva.', Icon: SiSwagger },
+                { t: 'Commons CSV', d: 'Parseo robusto de lotes y evaluación por archivos CSV.' },
+                { t: 'JJWT', d: 'Firma y verificación estándar de tokens para sesiones seguras.' },
+                { t: 'Actuator', d: 'Healthchecks y métricas para monitoreo y readiness.', Icon: SiSpring },
+                { t: 'H2 / MySQL', d: 'H2 acelera desarrollo; MySQL soporta despliegues productivos.', Icon: SiMysql },
+            ],
+        },
+        {
+            name: 'Frontend',
+            color: 'text-blue-400',
+            icon: <Code2 size={18} />,
+            items: [
+                { t: 'React 19', d: 'UI declarativa y componible; experiencia fluida para landing y demo.', Icon: SiReact },
+                { t: 'Vite 7', d: 'Dev server veloz y build optimizado para despliegue.', Icon: SiVite },
+                { t: 'Tailwind CSS 4', d: 'Diseño consistente y escalable sin salir de JSX.', Icon: SiTailwindcss },
+                { t: 'Framer Motion', d: 'Animaciones suaves que refuerzan narrativa sin penalizar rendimiento.', Icon: SiFramer },
+                { t: 'Recharts', d: 'Gráficas ligeras para métricas y tendencias de churn.' },
+                { t: 'Lucide Icons', d: 'Iconografía clara y accesible que guía la interacción.' },
+            ],
+        },
+        {
+            name: 'Infra & Otros',
+            color: 'text-gray-400',
+            icon: <Network size={18} />,
+            items: [
+                { t: 'Docker', d: 'Empaqueta servicios y dependencias; mismo entorno de dev a prod.', Icon: SiDocker },
+                { t: 'Docker Compose', d: 'Orquesta API, DS y dashboard con un solo comando.', Icon: SiDocker },
+                { t: 'Maven Wrapper', d: 'Build reproducible del backend sin instalaciones previas.', Icon: SiApachemaven },
+                { t: 'Streamlit', d: 'Dashboard para demos y pruebas de negocio en minutos.', Icon: SiStreamlit },
+                { t: 'Postman', d: 'Colecciones que estandarizan QA y validaciones de endpoints.', Icon: SiPostman },
+                { t: 'Insomnia', d: 'Cliente REST alternativo para pruebas rápidas y repetibles.', Icon: SiInsomnia },
+            ],
+        },
+    ];
+
+    const content = (
+        <>
+            <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300">
+                    <Terminal size={14} />
+                    <span>Stack Técnico</span>
+                </div>
+                <h2 className="text-4xl font-bold text-white mt-4">Tecnologías del Proyecto</h2>
+                <p className="text-gray-400 mt-2">Stack curado para velocidad, seguridad y mantenibilidad.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {categories.map((cat, i) => (
+                    <Card key={i} className="p-5 bg-[#0a0f1c] border-white/10 hover:border-neon-cyan/30 transition-colors">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className={`p-2 rounded bg-white/5 ${cat.color}`}>{cat.icon}</div>
+                            <h3 className="text-white font-semibold">{cat.name}</h3>
+                        </div>
+                        <ul className="space-y-2 text-sm text-gray-300">
+                            {cat.items.map((it, j) => (
+                                <li key={j} className="leading-snug flex items-start gap-2">
+                                    {it.Icon ? (
+                                        <span className="mt-[1px] text-gray-300 bg-white/5 rounded p-0.5"><it.Icon size={16} /></span>
+                                    ) : (
+                                        <span className="mt-1 w-1.5 h-1.5 bg-white/40 rounded-full inline-block" />
+                                    )}
+                                    <span><span className="text-white font-medium">{it.t}</span> — {it.d}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </Card>
+                ))}
+            </div>
+        </>
+    );
+
+    if (embedded) {
+        return (
+            <div className="pt-10">
+                {content}
+            </div>
+        );
+    }
+
+    return (
+        <section className="py-24 px-6 border-t border-white/5 bg-[#070c16]">
+            <div className="max-w-7xl mx-auto">
+                {content}
             </div>
         </section>
     );
