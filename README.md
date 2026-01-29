@@ -311,5 +311,5 @@ streamlit run dashboard/app.py
 - Orquestación con reconstrucción y recreación (script):
   ```powershell
   ./run.ps1 -Build            # reconstruye y fuerza recreación
-  ./run.ps1 -NoCache -Build   # reconstrucción cache-busting + recreación
+  ./run.ps1 -NoCache -Build   # reconstrucción cache-busting + recreación.
   ```
