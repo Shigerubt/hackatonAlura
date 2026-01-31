@@ -281,27 +281,9 @@ def predict():
                     properties:
                         features:
                             type: object
-                            description: 20 variables canónicas según el esquema Telco
         responses:
             200:
-                description: Respuesta enriquecida con compatibilidad histórica
-                schema:
-                    type: object
-                    properties:
-                        metadata:
-                            type: object
-                        prediction:
-                            type: object
-                        business_logic:
-                            type: object
-                        prevision:
-                            type: string
-                        probabilidad:
-                            type: number
-                        top_features:
-                            type: array
-                            items:
-                                type: string
+                description: OK
         """
         payload = request.get_json(silent=True) or {}
     feats = payload.get("features") or payload
