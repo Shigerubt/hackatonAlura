@@ -303,7 +303,7 @@ def predict():
                             items:
                                 type: string
         """
-    payload = request.get_json(silent=True) or {}
+        payload = request.get_json(silent=True) or {}
     feats = payload.get("features") or payload
     # Enforce input rules: case-sensitive strings, TotalCharges null->0.0
     if "TotalCharges" in feats and (feats["TotalCharges"] is None or feats["TotalCharges"] == ""):
