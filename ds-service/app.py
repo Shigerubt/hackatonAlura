@@ -3,6 +3,7 @@ import math
 from typing import Tuple, List, Optional
 
 from flask import Flask, request, jsonify
+from flasgger import Swagger
 
 try:
     import joblib  # type: ignore
@@ -10,6 +11,7 @@ except Exception:
     joblib = None
 
 app = Flask(__name__)
+swagger = Swagger(app)
 
 
 # Heuristic fallback model (canonical fields)
@@ -263,6 +265,44 @@ def predict_with_model(features: dict) -> Optional[Tuple[str, float, List[str]]]
 
 @app.route("/predict", methods=["POST"])
 def predict():
+        """
+        Predicción de churn (servicio DS)
+        ---
+        tags:
+            - DS
+        consumes:
+            - application/json
+        parameters:
+            - in: body
+                name: payload
+                required: true
+                schema:
+                    type: object
+                    properties:
+                        features:
+                            type: object
+                            description: 20 variables canónicas según el esquema Telco
+        responses:
+            200:
+                description: Respuesta enriquecida con compatibilidad histórica
+                schema:
+                    type: object
+                    properties:
+                        metadata:
+                            type: object
+                        prediction:
+                            type: object
+                        business_logic:
+                            type: object
+                        prevision:
+                            type: string
+                        probabilidad:
+                            type: number
+                        top_features:
+                            type: array
+                            items:
+                                type: string
+        """
     payload = request.get_json(silent=True) or {}
     feats = payload.get("features") or payload
     # Enforce input rules: case-sensitive strings, TotalCharges null->0.0

@@ -197,11 +197,17 @@ docker compose up --build
 - Healthchecks: `ds` y `dashboard` verifican sus puertos; `api` verifica el proceso de la app. El arranque del `dashboard` espera a que `api` esté saludable.
 
 ## Documentación de API
-- Swagger UI (si `springdoc` está habilitado): `http://localhost:8080/swagger-ui/index.html`
+- Swagger UI (Backend): `http://localhost:8080/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Swagger UI (DS service): `http://localhost:8000/apidocs`
 - Health (Actuator): `http://localhost:8080/actuator/health`
 
 ## Postman Collection
 - Importa `postman/ChurnInsight.postman_collection.json` y ejecuta los ejemplos incluidos.
+- Puedes actualizar la colección desde OpenAPI con:
+  ```powershell
+  Invoke-RestMethod -Uri http://localhost:8080/v3/api-docs -OutFile docs/openapi.json
+  ```
 
 ## Dependencias y versiones
 - Java: JDK 17 (propiedad `java.version`)

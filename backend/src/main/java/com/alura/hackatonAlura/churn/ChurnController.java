@@ -15,9 +15,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(path = "/api/churn", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Churn", description = "Predicción y estadísticas de churn")
 public class ChurnController {
 
     private final ChurnService churnService;
@@ -28,6 +31,7 @@ public class ChurnController {
     }
 
     @PostMapping(path = "/predict", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Predecir churn (individual)", description = "Recibe 20 variables canónicas y devuelve probabilidad y etiqueta.")
     public ChurnPredictionResponse predict(@Valid @RequestBody ChurnRequest request) {
         // Log básico con campos clave
         log.info("/predict recibido: tenure={}, MonthlyCharges={}, TotalCharges={}",
@@ -36,22 +40,26 @@ public class ChurnController {
     }
 
     @GetMapping(path = "/stats")
+    @Operation(summary = "Estadísticas", description = "Totales, tasa de churn y últimas predicciones.")
     public Map<String, Object> stats() {
         return churnService.stats();
     }
 
     @GetMapping("/predictions/top-risk")
+    @Operation(summary = "Top riesgo", description = "Últimas predicciones con mayor probabilidad de churn.")
     public List<Prediction> topRiskPredictions() {
         return churnService.topRiskPredictions();
     }
 
     @DeleteMapping("/predictions/clear")
+    @Operation(summary = "Limpiar predicciones", description = "Elimina todos los registros de predicción.")
     public ResponseEntity<Void> clearPredictions() {
         churnService.clearPredictions();
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(path = "/predict/batch", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Batch JSON", description = "Procesa una lista JSON de solicitudes de predicción.")
     public Map<String, Object> predictBatch(@Valid @RequestBody List<ChurnRequest> requests) {
         log.info("/predict/batch recibido: {} elementos", requests.size());
         List<ChurnPredictionResponse> results = requests.stream().map(churnService::predict).toList();
@@ -65,6 +73,7 @@ public class ChurnController {
     }
 
     @PostMapping(path = "/predict/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Batch CSV", description = "Procesa un CSV con encabezados canónicos y devuelve resultados agregados.")
     public Map<String, Object> predictBatchCsv(@RequestPart("file") MultipartFile file) throws Exception {
         try (var reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
              var parser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim())) {
@@ -76,6 +85,7 @@ public class ChurnController {
     }
     
     @PostMapping(path = "/evaluate/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Evaluación CSV", description = "CSV con etiqueta 'Churn' (Yes/No) para calcular métricas (accuracy, precision, recall, f1).")
     public Map<String, Object> evaluateBatchCsv(@RequestPart("file") MultipartFile file) throws Exception {
         try (var reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
              var parser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim())) {
