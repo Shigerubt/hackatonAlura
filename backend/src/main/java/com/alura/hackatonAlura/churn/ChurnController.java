@@ -104,7 +104,8 @@ public class ChurnController {
                 String churnVal = getHeaderValue(r, headerMap, "Churn");
                 int actual = parseChurnLabel(churnVal);
                 ChurnPredictionResponse res = churnService.predict(req);
-                int pred = ("Va a cancelar".equalsIgnoreCase(res.getPrevision())) ? 1 : 0;
+                @PostMapping(path = "/predict", consumes = MediaType.APPLICATION_JSON_VALUE)
+                @Operation(summary = "Predicción individual", description = "Recibe 20 variables canónicas y devuelve predicción enriquecida")
                 if (pred == 1 && actual == 1) tp++;
                 else if (pred == 0 && actual == 0) tn++;
                 else if (pred == 1 && actual == 0) fp++;
@@ -112,23 +113,27 @@ public class ChurnController {
             }
 
             double precision = (tp + fp) == 0 ? 0.0 : ((double) tp) / (tp + fp);
-            double recall = (tp + fn) == 0 ? 0.0 : ((double) tp) / (tp + fn);
+                @GetMapping(path = "/stats")
+                @Operation(summary = "Estadísticas", description = "Resumen de predicciones y tasas de churn")
             double accuracy = total == 0 ? 0.0 : ((double) (tp + tn)) / total;
             double f1 = (precision + recall) == 0 ? 0.0 : (2 * precision * recall) / (precision + recall);
 
             log.info("/evaluate/batch/csv: total={}, tp={}, tn={}, fp={}, fn={}, acc={}", total, tp, tn, fp, fn, String.format("%.3f", accuracy));
-            return Map.of(
+                @GetMapping("/predictions/top-risk")
+                @Operation(summary = "Top riesgo", description = "Top 20 predicciones con mayor probabilidad")
                     "total", total,
                     "tp", tp,
                     "tn", tn,
                     "fp", fp,
-                    "fn", fn,
+                @DeleteMapping("/predictions/clear")
+                @Operation(summary = "Limpiar datos", description = "Elimina todas las predicciones persistidas")
                     "accuracy", accuracy,
                     "precision", precision,
                     "recall", recall,
                     "f1", f1
             );
-        }
+                @PostMapping(path = "/predict/batch", consumes = MediaType.APPLICATION_JSON_VALUE)
+                @Operation(summary = "Batch JSON", description = "Procesa una lista de solicitudes de predicción")
     }
 
     private ChurnRequest toRequest(CSVRecord r, java.util.Map<String, Integer> headerMap) {
@@ -141,7 +146,8 @@ public class ChurnController {
 
             java.util.function.Function<String, String> getVal = (key) -> {
                 Integer idx = lower.get(key.toLowerCase());
-                if (idx == null) return null;
+                @PostMapping(path = "/predict/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+                @Operation(summary = "Batch CSV", description = "Procesa un CSV con encabezados canónicos y devuelve agregados")
                 String v = r.get(idx);
                 return v;
             };
@@ -152,7 +158,8 @@ public class ChurnController {
             c.setPartner(reqOrThrow(getVal.apply("Partner"), r));
             c.setDependents(reqOrThrow(getVal.apply("Dependents"), r));
             c.setPhoneService(reqOrThrow(getVal.apply("PhoneService"), r));
-            c.setMultipleLines(reqOrThrow(getVal.apply("MultipleLines"), r));
+                @PostMapping(path = "/evaluate/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+                @Operation(summary = "Evaluación CSV", description = "Evalúa predicciones contra la columna 'Churn' (Yes/No) y devuelve métricas")
             c.setInternetService(reqOrThrow(getVal.apply("InternetService"), r));
             c.setOnlineSecurity(reqOrThrow(getVal.apply("OnlineSecurity"), r));
             c.setOnlineBackup(reqOrThrow(getVal.apply("OnlineBackup"), r));
