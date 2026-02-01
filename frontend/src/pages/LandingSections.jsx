@@ -4,42 +4,10 @@ import { Button } from '../components/ui/Button';
 import { TrendingUp, Users, Github, Linkedin } from 'lucide-react';
 
 function FlagIcon({ code, size = 16 }) {
-  const w = size;
-  const h = Math.round(size * 0.75);
-  switch (code) {
-    case 'GT':
-      return (
-        <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Guatemala flag">
-          <rect width="1" height="2" x="0" y="0" fill="#4997D0" />
-          <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
-          <rect width="1" height="2" x="2" y="0" fill="#4997D0" />
-        </svg>
-      );
-    case 'MX':
-                    <rect width="1" height="2" x="0" y="0" fill="#006847" />
-                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
-                    <rect width="1" height="2" x="2" y="0" fill="#CE1126" />
-                </svg>
-            );
-        case 'PE':
-            return (
-                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Peru flag">
-                    <rect width="1" height="2" x="0" y="0" fill="#D91023" />
-                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
-                    <rect width="1" height="2" x="2" y="0" fill="#D91023" />
-                </svg>
-            );
-        case 'CO':
-            return (
-                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Colombia flag">
-                    <rect width="3" height="1" x="0" y="0" fill="#FCD116" />
-                    <rect width="3" height="0.5" x="0" y="1" fill="#003893" />
-                    <rect width="3" height="0.5" x="0" y="1.5" fill="#CE1126" />
-                </svg>
-            );
-        default:
-            return null;
-    }
+    const style = { fontSize: size, lineHeight: 1 };
+    const map = { GT: '🇬🇹', MX: '🇲🇽', PE: '🇵🇪', CO: '🇨🇴' };
+    const emoji = map[code] || '🏁';
+    return <span style={style} aria-label={`${code} flag`}>{emoji}</span>;
 }
 
 export function OperatingBrainSection() {
@@ -47,12 +15,6 @@ export function OperatingBrainSection() {
         <section className="py-16 px-6 max-w-7xl mx-auto">
             <div className="text-center">
                 <h2 className="text-3xl font-bold mb-3">Cerebro Operativo</h2>
-    function FlagIcon({ code, size = 16 }) {
-        const style = { fontSize: size, lineHeight: 1 };
-        const map = { GT: '🇬🇹', MX: '🇲🇽', PE: '🇵🇪', CO: '🇨🇴' };
-        const emoji = map[code] || '🏁';
-        return <span style={style} aria-label={`${code} flag`}>{emoji}</span>;
-    }
                 <p className="text-gray-400">Arquitectura desacoplada para predicciones confiables y rápidas.</p>
             </div>
         </section>
@@ -103,14 +65,14 @@ export function RoiSection() {
 
 export function TeamSection() {
     const team = [
-        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', flagCode: 'GT', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/' },
-        { name: 'Agueda J. Guzman', role: 'Backend Manager', flagCode: 'MX', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/' },
-        { name: 'Jhon A. Alonzo Huamán', role: 'DS Strategy Manager', flagCode: 'PE', linkedin: 'https://www.linkedin.com/in/jalonzoh/' },
-        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', flagCode: 'PE', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/' },
-        { name: 'Gabriel Franco', role: 'Pitch Speaker', flagCode: 'CO', linkedin: 'https://www.linkedin.com/in/lgab/' },
-        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', flagCode: 'MX', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/' },
-        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', flagCode: 'MX', linkedin: 'https://www.linkedin.com/in/vanessaangulose/' },
-        { name: 'Kevin S. Morales', role: 'Backend Engineer', flagCode: 'CO', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2' }
+        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', flagCode: 'GT', img: '/profile-pictures/Hugo.jpg', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/' },
+        { name: 'Agueda J. Guzman', role: 'Backend Manager', flagCode: 'MX', img: '/profile-pictures/Agueda.jpeg', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/' },
+        { name: 'Jhon A. Alonzo Huamán', role: 'DS Strategy Manager', flagCode: 'PE', img: '/profile-pictures/Jhon.jpeg', linkedin: 'https://www.linkedin.com/in/jalonzoh/' },
+        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', flagCode: 'PE', img: '/profile-pictures/Heriberto.jpg', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/' },
+        { name: 'Gabriel Franco', role: 'Pitch Speaker', flagCode: 'CO', img: '/profile-pictures/Gabriel.jpeg', linkedin: 'https://www.linkedin.com/in/lgab/' },
+        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', flagCode: 'MX', img: '/profile-pictures/Roxi.jpeg', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/' },
+        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', flagCode: 'MX', img: '/profile-pictures/Vane.jpeg', linkedin: 'https://www.linkedin.com/in/vanessaangulose/' },
+        { name: 'Kevin S. Morales', role: 'Backend Engineer', flagCode: 'CO', img: '/profile-pictures/Kevin.jpeg', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2' }
     ];
     return (
         <section className="py-24 px-6 border-t border-white/5 bg-navy-deep">
@@ -121,10 +83,14 @@ export function TeamSection() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {team.map((member, idx) => (
-                        <Card key={idx} className="group p-6 text-center border-white/5">
-                            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10">
-                                <Users className="text-gray-500" size={28} />
-                            </div>
+                                                <Card key={idx} className="group p-6 text-center border-white/5">
+                                                        <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10">
+                                                                {member.img ? (
+                                                                    <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
+                                                                ) : (
+                                                                    <Users className="text-gray-500" size={28} />
+                                                                )}
+                                                        </div>
                             <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center gap-2">
                                 <span>{member.name}</span>
                                 {member.flagCode && <span className="inline-flex items-center"><FlagIcon code={member.flagCode} size={14} /></span>}
@@ -177,47 +143,7 @@ export function CtaSection() {
         </section>
     );
 }
-                                            </div>
-                                        </motion.div>
-
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95 }}
-                                            whileInView={{ opacity: 1, scale: 1 }}
-                                            transition={{ delay: 0.2 }}
-                                        >
-                                            <Card className="bg-[#0a0f1c] p-6 border-white/10">
-                                                <div className="space-y-4">
-                                                    <div className="flex items-center gap-2 text-gray-400 text-xs font-mono">
-                                                        <span>project_overview.md</span>
-                                                        <span className="ml-auto">v1.0</span>
-                                                    </div>
-                                                    <ul className="text-sm text-gray-300 space-y-2">
-                                                        <li className="flex items-center gap-2"><Lock size={14} className="text-neon-cyan" /><span>Endpoints protegidos con JWT</span></li>
-                                                        <li className="flex items-center gap-2"><Zap size={14} className="text-neon-cyan" /><span>Latencia baja y lote 7k+ registros</span></li>
-                                                        <li className="flex items-center gap-2"><Server size={14} className="text-alert-red" /><span>API Spring Boot + DS Flask</span></li>
-                                                    </ul>
-                                                </div>
-                                            </Card>
-                                        </motion.div>
-                                    </div>
-
-                                    {/* Section 1: Data Pipeline */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                                        <motion.div
-                                            initial={{ opacity: 0, x: -20 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.2 }}
-                                            className="space-y-6"
-                                        >
-                                            <div className="flex items-center gap-3 text-neon-cyan mb-2">
-                                                <Scale size={24} />
-                                                <span className="font-mono text-sm tracking-widest uppercase">Análisis Técnico del Modelo</span>
-                                            </div>
-                                            <h3 className="text-3xl font-bold text-white">XGBoost: Gradient Boosted Trees para Churn</h3>
-                                            <p className="text-gray-400 leading-relaxed border-l-2 border-neon-cyan/20 pl-4">
-                                                El modelo final de <span className="text-white font-semibold">Churn Alert</span> es <span className="text-white font-semibold">XGBoost</span>, un ensamble de árboles potenciados por gradiente que corrige iterativamente errores. Captura relaciones no lineales e interacciones entre variables como <span className="font-mono text-sm bg-white/5 px-1 rounded">Contract</span>, <span className="font-mono text-sm bg-white/5 px-1 rounded">tenure</span> y <span className="font-mono text-sm bg-white/5 px-1 rounded">OnlineSecurity</span>, ofreciendo alta precisión en datos tabulares.
-                                            </p>
-                                            <p className="text-gray-400 leading-relaxed">
+ 
                                                 La regularización (L1/L2), la profundidad máxima y el <em>learning rate</em> controlan la complejidad y reducen el sobreajuste. La importancia de variables se reporta vía <em>gain</em> y <em>cover</em>, guiando decisiones sobre los principales impulsores del churn.
                                             </p>
 
