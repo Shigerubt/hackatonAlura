@@ -100,12 +100,22 @@ export function ApiIntegrationSection() {
                         Endpoints protegidos con JWT, documentación viva con Swagger/OpenAPI y soporte para lotes CSV. Lista para producción con healthchecks y métricas.
                     </p>
                     <div className="mt-6 flex gap-3">
-                        <a href="/api/swagger-ui/index.html" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 bg-white/5">
-                            <SiSwagger className="text-green-400" /> Swagger UI
-                        </a>
-                        <a href="/ds/apidocs" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 bg-white/5">
-                            <SiOpenapiinitiative className="text-neon-cyan" /> DS Docs
-                        </a>
+                            {(() => {
+                                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+                                const apiOrigin = apiUrl.replace(/\/api\/?$/, '');
+                                const apiDocs = import.meta.env.VITE_API_DOCS_URL || `${apiOrigin}/swagger-ui/index.html`;
+                                const dsDocs = import.meta.env.VITE_DS_DOCS_URL || 'http://localhost:8000/apidocs';
+                                return (
+                                    <>
+                                        <a href={apiDocs} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 bg-white/5">
+                                            <SiSwagger className="text-green-400" /> Swagger UI
+                                        </a>
+                                        <a href={dsDocs} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 bg-white/5">
+                                            <SiOpenapiinitiative className="text-neon-cyan" /> DS Docs
+                                        </a>
+                                    </>
+                                );
+                            })()}
                     </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
