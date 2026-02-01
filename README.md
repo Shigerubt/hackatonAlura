@@ -200,6 +200,8 @@ docker compose up --build
 - Swagger UI (Backend): `http://localhost:8080/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 - Swagger UI (DS service): `http://localhost:8000/apidocs`
+- OpenAPI JSON (DS, estático): `http://localhost:8000/swagger.json`
+- Flasgger (alternativo): `http://localhost:8000/flasgger`
 - Health (Actuator): `http://localhost:8080/actuator/health`
 
 ## Postman Collection

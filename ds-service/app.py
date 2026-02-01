@@ -4,6 +4,7 @@ from typing import Tuple, List, Optional
 
 from flask import Flask, request, jsonify
 from flasgger import Swagger
+from flask_swagger_ui import get_swaggerui_blueprint
 
 try:
     import joblib  # type: ignore
@@ -11,6 +12,16 @@ except Exception:
     joblib = None
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
+@app.errorhandler(Exception)
+def _global_error(e):
+    try:
+        print(f"[DS ERROR] {type(e).__name__}: {e}", flush=True)
+    except Exception:
+        pass
+    return jsonify({"error": "internal", "detail": str(e)}), 500
 
 # Configure Flasgger (Swagger 2.0) and serve UI at /apidocs/
 swagger_template = {
@@ -30,9 +41,68 @@ swagger_config = {
     ],
     "static_url_path": "/flasgger_static",
     "swagger_ui": True,
-    "specs_route": "/apidocs/"
+    "specs_route": "/flasgger/"
 }
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
+
+# Static Swagger JSON for UI (fallback to avoid Flasgger generation issues)
+@app.route('/swagger.json')
+def swagger_json():
+    return jsonify({
+        "swagger": "2.0",
+        "info": {"title": "Hackaton DS API", "version": "1.0.0"},
+        "basePath": "/",
+        "paths": {
+            "/predict": {
+                "post": {
+                    "tags": ["DS"],
+                    "consumes": ["application/json"],
+                    "produces": ["application/json"],
+                    "parameters": [
+                        {
+                            "in": "body",
+                            "name": "payload",
+                            "required": True,
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "features": {"type": "object", "description": "20 canonical variables (Telco schema)"}
+                                }
+                            }
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Enriched response with legacy compatibility",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "metadata": {"type": "object"},
+                                    "prediction": {"type": "object"},
+                                    "business_logic": {"type": "object"},
+                                    "prevision": {"type": "string"},
+                                    "probabilidad": {"type": "number"},
+                                    "top_features": {"type": "array", "items": {"type": "string"}}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+# Swagger UI served at /apidocs using static JSON
+SWAGGER_URL = '/apidocs'
+API_URL = '/swagger.json'
+SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Hackaton DS API"
+    }
+)
+app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
 
 # Heuristic fallback model (canonical fields)
@@ -297,34 +367,13 @@ def predict():
             - application/json
         parameters:
             - in: body
-                name: payload
+                name: body
                 required: true
                 schema:
                     type: object
-                    properties:
-                        features:
-                            type: object
-                            description: 20 canonical variables (Telco schema)
         responses:
             200:
-                description: Enriched response with legacy compatibility
-                schema:
-                    type: object
-                    properties:
-                        metadata:
-                            type: object
-                        prediction:
-                            type: object
-                        business_logic:
-                            type: object
-                        prevision:
-                            type: string
-                        probabilidad:
-                            type: number
-                        top_features:
-                            type: array
-                            items:
-                                type: string
+                description: OK
         """
         payload = request.get_json(silent=True) or {}
         feats = payload.get("features") or payload
