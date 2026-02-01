@@ -49,8 +49,36 @@ export default function Overview({ refreshKey }) {
     // Motivos dinámicos: cuando no hay data, 'Otros' debe ser 100%.
     // Con datos, reflejar lo disponible del dataset; agrupamos categorías sin información en 'Otros'.
     const computeMotives = () => {
+        // Preferir backend stats.motivos si está disponible
+        const m = stats?.motivos;
+        if (m && typeof m === 'object') {
+            const total = m.total ?? 0;
+            const contratoMes = m.contrato_mes_a_mes ?? 0;
+            const sinSeguridad = m.sin_seguridad_online ?? 0;
+            const fibraOptica = m.fibra_optica ?? 0;
+            const cargosAltos = m.cargos_mensuales_altos ?? 0;
+            const otros = Math.max(total - (contratoMes + sinSeguridad + fibraOptica + cargosAltos), 0);
+
+            if (!total) {
+                return [
+                    { name: 'Cargos Mensuales Altos', value: 0, color: '#fbbf24' },
+                    { name: 'Contrato Mes a Mes', value: 0, color: '#f87171' },
+                    { name: 'Fibra Óptica', value: 0, color: '#f43f5e' },
+                    { name: 'Sin Seguridad Online', value: 0, color: '#fb923c' },
+                    { name: 'Otros', value: 100, color: '#64748b' }
+                ];
+            }
+            return [
+                { name: 'Cargos Mensuales Altos', value: cargosAltos, color: '#fbbf24' },
+                { name: 'Contrato Mes a Mes', value: contratoMes, color: '#f87171' },
+                { name: 'Fibra Óptica', value: fibraOptica, color: '#f43f5e' },
+                { name: 'Sin Seguridad Online', value: sinSeguridad, color: '#fb923c' },
+                { name: 'Otros', value: otros, color: '#64748b' }
+            ];
+        }
+
+        // Fallback: usar topRisk si stats.motivos no está disponible
         const total = (topRisk?.length || 0);
-        // Sin datos: 100% Otros
         if (!total) {
             return [
                 { name: 'Cargos Mensuales Altos', value: 0, color: '#fbbf24' },

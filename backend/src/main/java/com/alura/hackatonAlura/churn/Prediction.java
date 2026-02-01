@@ -36,6 +36,10 @@ public class Prediction {
     // 'plan' ya no es obligatorio; se permite nulo para compatibilidad histórica
     private String plan;
 
+    // Nuevos campos para motivos (opcionales)
+    private String contract;          // Ej: "Month-to-month", "One year", "Two year"
+    private String internetService;   // Ej: "DSL", "Fiber optic", "No"
+    private String onlineSecurity;    // Ej: "Yes", "No", "No internet service"
 
 
     @Column(nullable = false)

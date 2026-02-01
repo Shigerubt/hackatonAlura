@@ -66,6 +66,10 @@ public class ChurnService {
         p.setTiempoContratoMeses(req.getTenure());
         p.setRetrasosPago(0); // campo legado sin equivalente directo
         p.setUsoMensual(req.getMonthlyCharges());
+        // Persist motive-related fields for stats
+        p.setContract(req.getContract());
+        p.setInternetService(req.getInternetService());
+        p.setOnlineSecurity(req.getOnlineSecurity());
         p.setSource(res.getTopFeatures() != null ? (dsUrl.isEmpty() ? "heuristic" : "DS") : (dsUrl.isEmpty() ? "heuristic" : "DS"));
         p.setRiskLevel(riskLevel);
         predictionRepository.save(p);
@@ -119,12 +123,41 @@ public class ChurnService {
             ultima = tops.get(0).getCreatedAt();
         }
 
+        // Motivos: derivados de campos persistidos
+        long contratoMes = predictionRepository.findAll().stream()
+            .filter(p -> {
+                String c = p.getContract();
+                return c != null && c.equals("Month-to-month");
+            }).count();
+        long fibraOptica = predictionRepository.findAll().stream()
+            .filter(p -> {
+                String i = p.getInternetService();
+                return i != null && i.equals("Fiber optic");
+            }).count();
+        long sinSeguridad = predictionRepository.findAll().stream()
+            .filter(p -> {
+                String s = p.getOnlineSecurity();
+                return s != null && s.equals("No");
+            }).count();
+        long cargosAltos = predictionRepository.findAll().stream()
+            .filter(p -> p.getUsoMensual() != null && p.getUsoMensual() >= 90.0)
+            .count();
+        long otrosMotivos = Math.max(total - (contratoMes + fibraOptica + sinSeguridad + cargosAltos), 0);
+
         Map<String, Object> result = new HashMap<>();
         result.put("total_predicciones", total);
         result.put("total_evaluados", total);
         result.put("cancelaciones", churn);
         result.put("tasa_churn", tasa);
         result.put("por_riesgo", porRiesgo);
+        result.put("motivos", Map.of(
+            "contrato_mes_a_mes", contratoMes,
+            "sin_seguridad_online", sinSeguridad,
+            "fibra_optica", fibraOptica,
+            "cargos_mensuales_altos", cargosAltos,
+            "otros", otrosMotivos,
+            "total", total
+        ));
         result.put("ultima_prediccion", ultima);
         result.put("geografias", Map.of("Global", total));
 
