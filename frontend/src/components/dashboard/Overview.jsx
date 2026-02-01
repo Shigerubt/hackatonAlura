@@ -46,13 +46,40 @@ export default function Overview({ refreshKey }) {
         { name: 'Alto', value: stats?.por_riesgo?.alto || 0, color: '#ef4444' }
     ];
 
-    const motivesData = [
-        { name: 'Contrato Mes a Mes', value: 35, color: '#f87171' },
-        { name: 'Sin Seguridad Online', value: 25, color: '#fb923c' },
-        { name: 'Cargos Mensuales Altos', value: 20, color: '#fbbf24' },
-        { name: 'Fibra Óptica', value: 15, color: '#f43f5e' },
-        { name: 'Otros', value: 5, color: '#64748b' }
-    ];
+    // Motivos dinámicos: cuando no hay data, 'Otros' debe ser 100%.
+    // Con datos, reflejar lo disponible del dataset; agrupamos categorías sin información en 'Otros'.
+    const computeMotives = () => {
+        const total = (topRisk?.length || 0);
+        // Sin datos: 100% Otros
+        if (!total) {
+            return [
+                { name: 'Cargos Mensuales Altos', value: 0, color: '#fbbf24' },
+                { name: 'Contrato Mes a Mes', value: 0, color: '#f87171' },
+                { name: 'Fibra Óptica', value: 0, color: '#f43f5e' },
+                { name: 'Sin Seguridad Online', value: 0, color: '#fb923c' },
+                { name: 'Otros', value: 100, color: '#64748b' }
+            ];
+        }
+
+        // Con datos: inferimos 'Cargos Mensuales Altos' desde usoMensual.
+        // Las categorías sin datos (Contrato, Fibra, Seguridad) se agrupan en 'Otros'.
+        const HIGH_CHARGE_THRESHOLD = 90; // umbral aproximado
+        const highCharges = topRisk.filter(c => (c?.usoMensual ?? 0) >= HIGH_CHARGE_THRESHOLD).length;
+
+        const contratoMes = 0;      // no disponible en datos agregados actuales
+        const fibraOptica = 0;      // no disponible en datos agregados actuales
+        const sinSeguridad = 0;     // no disponible en datos agregados actuales
+        const otros = Math.max(total - (highCharges + contratoMes + fibraOptica + sinSeguridad), 0);
+
+        return [
+            { name: 'Cargos Mensuales Altos', value: highCharges, color: '#fbbf24' },
+            { name: 'Contrato Mes a Mes', value: contratoMes, color: '#f87171' },
+            { name: 'Fibra Óptica', value: fibraOptica, color: '#f43f5e' },
+            { name: 'Sin Seguridad Online', value: sinSeguridad, color: '#fb923c' },
+            { name: 'Otros', value: otros, color: '#64748b' }
+        ];
+    };
+    const motivesData = computeMotives();
 
     const cards = [
         { 
@@ -191,6 +218,7 @@ export default function Overview({ refreshKey }) {
                         <PieIcon size={20} className="text-alert-red" />
                         Principales Motivos de Cancelación
                     </h3>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Gráfico dinámico: cuando no hay datos, "Otros" es 100%</p>
                     <div className="h-[250px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
