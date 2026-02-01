@@ -265,64 +265,6 @@ export function CtaSection() {
                     >
                         <ChevronDown size={32} />
                     </motion.button>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-export function CtaSection() {
-    return (
-        <section className="py-32 px-6 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-navy-deep to-[#02050a]" />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
-
-            <div className="max-w-4xl mx-auto text-center relative z-10">
-                <h2 className="text-5xl md:text-6xl font-bold text-white mb-8 tracking-tight">
-                    Deja de adivinar por qué <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-blue-500">tus clientes se van.</span>
-                </h2>
-                <p className="text-xl text-gray-400 mb-12">
-                    Tus clientes te están enviando señales de despedida. ¿Estás escuchando?
-                    <br />
-                    Churn Alert traduce el silencio de tus datos en acciones de rescate inmediatas.
-                </p>
-
-                <Button 
-                    onClick={() => alert("¡Simulación finalizada! Agradecemos profundamente a Alura Latam y Oracle por la oportunidad otorgada en este Hackathon.")}
-                    className="mx-auto text-xl px-12 py-6 h-auto shadow-[0_0_50px_rgba(100,255,218,0.2)] hover:shadow-[0_0_80px_rgba(100,255,218,0.4)]"
-                >
-                    <CalendarCheck className="mr-3" />
-                    Reserva una Sesión Estratégica
-                </Button>
-            </div>
-        </section>
-    );
-}
-
-// Nueva sección: Tecnologías del Proyecto
-export function TechnologiesSection({ embedded = false }) {
-    const categories = [
-        {
-            name: 'Data Science',
-            color: 'text-neon-cyan',
-            icon: <Cpu size={18} />,
-            items: [
-                { t: 'Python 3.10+', d: 'Lenguaje base del microservicio DS; prototipa y despliega modelos rápidamente.', Icon: SiPython },
-                { t: 'Flask 3', d: 'Microframework que expone el modelo vía HTTP con rutas ligeras y mantenibles.', Icon: SiFlask },
-                { t: 'scikit-learn', d: 'Entrenamiento, métricas y pipelines reproducibles para datos tabulares.', Icon: SiScikitlearn },
-                { t: 'pandas', d: 'Procesa y valida las 20 variables canónicas con operaciones vectorizadas.', Icon: SiPandas },
-                { t: 'XGBoost', d: 'Modelo eficiente y preciso para clasificación con explicabilidad básica.' },
-                { t: 'joblib', d: 'Serializa el pipeline para cargar en producción sin reentrenar.' },
-            ],
-        },
-        {
-            name: 'Backend',
-            color: 'text-alert-red',
-            icon: <Server size={18} />,
-            items: [
-                { t: 'Java 17', d: 'LTS estable y performante; base de la API con mejoras modernas de GC.', Icon: SiOpenjdk },
-                { t: 'Spring Boot 3', d: 'Arranque rápido, configuración mínima y observabilidad integrada.', Icon: SiSpring },
                 { t: 'Spring Security', d: 'Protege endpoints con JWT y reglas de autorización claras.', Icon: SiSpring },
                 { t: 'Spring Data JPA', d: 'Persistencia con repositorios declarativos para auditoría de predicciones.', Icon: SiSpring },
                 { t: 'Validation', d: 'Ergonomía para errores 400 claros y por campo en requests.', Icon: SiSpring },
