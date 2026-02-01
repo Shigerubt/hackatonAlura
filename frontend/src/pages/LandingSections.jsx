@@ -1,21 +1,86 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { TrendingUp, Users, Github, Linkedin } from 'lucide-react';
+import { Terminal, Cpu, Database, Network, TrendingUp, Users, ArrowRight, Github, Linkedin, CalendarCheck, Code2, Lock, Zap, ChevronDown, Activity, Server, Scale, Mic } from 'lucide-react';
+import { 
+    SiPython, SiFlask, SiScikitlearn, SiPandas, SiOpenjdk, SiSpring, SiOpenapiinitiative, SiDocker, 
+    SiReact, SiVite, SiTailwindcss, SiFramer, SiMysql, SiApachemaven, SiStreamlit, SiPostman, SiInsomnia, SiSwagger 
+} from 'react-icons/si';
+import insightBot from '../assets/insight-bot.png';
 
+// Minimal SVG flags (approximate) for team nationality badges
 function FlagIcon({ code, size = 16 }) {
-    const style = { fontSize: size, lineHeight: 1 };
-    const map = { GT: '🇬🇹', MX: '🇲🇽', PE: '🇵🇪', CO: '🇨🇴' };
-    const emoji = map[code] || '🏁';
-    return <span style={style} aria-label={`${code} flag`}>{emoji}</span>;
+    const w = size;
+    const h = Math.round(size * 0.75);
+    switch (code) {
+        case 'GT': // Guatemala (blue-white-blue)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Guatemala flag">
+                    <rect width="1" height="2" x="0" y="0" fill="#4997D0" />
+                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+                    <rect width="1" height="2" x="2" y="0" fill="#4997D0" />
+                </svg>
+            );
+        case 'MX': // Mexico (green-white-red)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Mexico flag">
+                    <rect width="1" height="2" x="0" y="0" fill="#006847" />
+                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+                    <rect width="1" height="2" x="2" y="0" fill="#CE1126" />
+                </svg>
+            );
+        case 'PE': // Peru (red-white-red)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Peru flag">
+                    <rect width="1" height="2" x="0" y="0" fill="#D91023" />
+                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+                    <rect width="1" height="2" x="2" y="0" fill="#D91023" />
+                </svg>
+            );
+        case 'CO': // Colombia (yellow-blue-red)
+            return (
+                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Colombia flag">
+                    <rect width="3" height="1" x="0" y="0" fill="#FCD116" />
+                    <rect width="3" height="0.5" x="0" y="1" fill="#003893" />
+                    <rect width="3" height="0.5" x="0" y="1.5" fill="#CE1126" />
+                </svg>
+            );
+        default:
+            return null;
+    }
 }
 
 export function OperatingBrainSection() {
     return (
-        <section className="py-16 px-6 max-w-7xl mx-auto">
-            <div className="text-center">
-                <h2 className="text-3xl font-bold mb-3">Cerebro Operativo</h2>
-                <p className="text-gray-400">Arquitectura desacoplada para predicciones confiables y rápidas.</p>
+        <section className="py-20 px-6">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+                    <div className="flex items-center gap-3 text-neon-cyan mb-3">
+                        <Cpu size={22} />
+                        <span className="font-mono text-xs tracking-widest uppercase">Cerebro Operativo</span>
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">XGBoost para anticipar el abandono</h2>
+                    <p className="text-gray-400 leading-relaxed">
+                        Entrenado sobre 20 variables canónicas, el modelo XGBoost captura relaciones no lineales e interacciones clave como contrato, tenure y seguridad online.
+                    </p>
+                    <div className="mt-6 grid grid-cols-2 gap-4">
+                        <Card className="p-4 bg-white/5 border-white/10">
+                            <div className="text-2xl font-bold text-white">20</div>
+                            <div className="text-xs text-gray-400 uppercase tracking-wider">Variables</div>
+                        </Card>
+                        <Card className="p-4 bg-white/5 border-white/10">
+                            <div className="text-2xl font-bold text-white">ms</div>
+                            <div className="text-xs text-gray-400 uppercase tracking-wider">Latencia baja</div>
+                        </Card>
+                    </div>
+                </motion.div>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
+                    <Card className="p-6 bg-[#0a0f1c] border-white/10 text-center">
+                        <img src={insightBot} alt="Insight Bot" className="mx-auto w-48 h-48 object-contain" />
+                        <p className="text-gray-400 text-sm mt-4">Inferencia rápida y explicable para decisiones de retención.</p>
+                    </Card>
+                </motion.div>
             </div>
         </section>
     );
@@ -23,41 +88,35 @@ export function OperatingBrainSection() {
 
 export function ApiIntegrationSection() {
     return (
-        <section className="py-16 px-6 max-w-7xl mx-auto">
-            <div className="text-center">
-                <h2 className="text-3xl font-bold mb-3">Integración de API</h2>
-                <p className="text-gray-400">Backend Spring + DS Flask con documentación Swagger.</p>
-            </div>
-        </section>
-    );
-}
-
-export function RoiSection() {
-    return (
-        <section className="py-24 px-6 max-w-7xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                ¿Cuánto dinero estás <br />
-                <span className="text-alert-red">dejando sobre la mesa?</span>
-            </h2>
-            <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-                Nuestras simulaciones muestran un aumento del 22% en la retención durante el primer trimestre.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="flex flex-col items-center p-8 bg-white/5 border-white/10">
-                    <TrendingUp size={32} className="text-neon-cyan mb-4" />
-                    <div className="text-4xl font-bold text-white mb-2">+22%</div>
-                    <div className="text-gray-400 font-medium">Retención de Clientes</div>
-                </Card>
-                <Card className="flex flex-col items-center p-8 bg-white/5 border-white/10">
-                    <Users size={32} className="text-green-400 mb-4" />
-                    <div className="text-4xl font-bold text-white mb-2">3.5x</div>
-                    <div className="text-gray-400 font-medium">ROI Estimado (Year 1)</div>
-                </Card>
-                <Card className="flex flex-col items-center p-8 bg-white/5 border-white/10">
-                    <Users size={32} className="text-alert-red mb-4" />
-                    <div className="text-4xl font-bold text-white mb-2">-45%</div>
-                    <div className="text-gray-400 font-medium">Tasa de Deserción</div>
-                </Card>
+        <section className="py-20 px-6 border-t border-white/5 bg-[#070c16]">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+                    <div className="flex items-center gap-3 text-blue-400 mb-3">
+                        <Network size={22} />
+                        <span className="font-mono text-xs tracking-widest uppercase">Integración API</span>
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Gateway Spring Boot + DS Flask</h2>
+                    <p className="text-gray-400 leading-relaxed">
+                        Endpoints protegidos con JWT, documentación viva con Swagger/OpenAPI y soporte para lotes CSV. Lista para producción con healthchecks y métricas.
+                    </p>
+                    <div className="mt-6 flex gap-3">
+                        <a href="/api/swagger-ui/index.html" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 bg-white/5">
+                            <SiSwagger className="text-green-400" /> Swagger UI
+                        </a>
+                        <a href="/ds/apidocs" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 bg-white/5">
+                            <SiOpenapiinitiative className="text-neon-cyan" /> DS Docs
+                        </a>
+                    </div>
+                </motion.div>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
+                    <Card className="p-6 bg-[#0a0f1c] border-white/10">
+                        <ul className="text-sm text-gray-300 space-y-2 font-mono">
+                            <li className="flex items-center gap-2"><Lock size={14} className="text-neon-cyan" /><span>JWT y reglas claras de autorización</span></li>
+                            <li className="flex items-center gap-2"><Zap size={14} className="text-neon-cyan" /><span>Baja latencia, lotes 7k+</span></li>
+                            <li className="flex items-center gap-2"><Server size={14} className="text-alert-red" /><span>Spring Boot + Flask</span></li>
+                        </ul>
+                    </Card>
+                </motion.div>
             </div>
         </section>
     );
@@ -65,38 +124,43 @@ export function RoiSection() {
 
 export function TeamSection() {
     const team = [
-        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', flagCode: 'GT', img: '/profile-pictures/Hugo.jpg', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/' },
-        { name: 'Agueda J. Guzman', role: 'Backend Manager', flagCode: 'MX', img: '/profile-pictures/Agueda.jpeg', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/' },
-        { name: 'Jhon A. Alonzo Huamán', role: 'DS Strategy Manager', flagCode: 'PE', img: '/profile-pictures/Jhon.jpeg', linkedin: 'https://www.linkedin.com/in/jalonzoh/' },
-        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', flagCode: 'PE', img: '/profile-pictures/Heriberto.jpg', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/' },
-        { name: 'Gabriel Franco', role: 'Pitch Speaker', flagCode: 'CO', img: '/profile-pictures/Gabriel.jpeg', linkedin: 'https://www.linkedin.com/in/lgab/' },
-        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', flagCode: 'MX', img: '/profile-pictures/Roxi.jpeg', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/' },
-        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', flagCode: 'MX', img: '/profile-pictures/Vane.jpeg', linkedin: 'https://www.linkedin.com/in/vanessaangulose/' },
-        { name: 'Kevin S. Morales', role: 'Backend Engineer', flagCode: 'CO', img: '/profile-pictures/Kevin.jpeg', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2' }
+        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/', flagCode: 'GT' },
+        { name: 'Agueda J. Guzman', role: 'Backend Manager', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/', flagCode: 'MX' },
+        { name: 'Jhon A. Alonzo Huamín', role: 'DS Strategy Manager', linkedin: 'https://www.linkedin.com/in/jalonzoh/', flagCode: 'PE' },
+        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/', flagCode: 'PE' },
+        { name: 'Gabriel Franco', role: 'Pitch Speaker', linkedin: 'https://www.linkedin.com/in/lgab/', flagCode: 'CO' },
+        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/', flagCode: 'MX' },
+        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', linkedin: 'https://www.linkedin.com/in/vanessaangulose/', flagCode: 'MX' },
+        { name: 'Kevin S. Morales', role: 'Backend Engineer', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2', flagCode: 'CO' },
     ];
+
     return (
         <section className="py-24 px-6 border-t border-white/5 bg-navy-deep">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-bold text-white mb-4">Meet the Sentinels</h2>
-                    <p className="text-gray-400">Los arquitectos detrás de la predicción y los guardianes de la retención.</p>
+                    <p className="text-gray-400">Arquitectos de la predicción y guardianes de la retención.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {team.map((member, idx) => (
-                                                <Card key={idx} className="group p-6 text-center border-white/5">
-                                                        <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10">
-                                                                {member.img ? (
-                                                                    <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
-                                                                ) : (
-                                                                    <Users className="text-gray-500" size={28} />
-                                                                )}
-                                                        </div>
+                        <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
+                            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors relative">
+                                <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
+                                {member.role === 'Pitch Speaker' && (
+                                    <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white/10 border border-neon-cyan/40 text-neon-cyan shadow">
+                                        <Mic size={12} />
+                                    </span>
+                                )}
+                            </div>
                             <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center gap-2">
                                 <span>{member.name}</span>
-                                {member.flagCode && <span className="inline-flex items-center"><FlagIcon code={member.flagCode} size={14} /></span>}
+                                {member.flagCode && (
+                                    <span className="inline-flex items-center"><FlagIcon code={member.flagCode} size={14} /></span>
+                                )}
                             </h3>
-                            <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono">
-                                {member.role}
+                            <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono flex items-center justify-center gap-1">
+                                {member.role === 'Pitch Speaker' && <Mic size={12} className="text-neon-cyan" />}
+                                <span>{member.role === 'Pitch Speaker' ? 'Data Scientist • Pitch Speaker' : member.role}</span>
                             </p>
                             <div className="flex justify-center gap-4 text-gray-400">
                                 {member.github && (
@@ -118,32 +182,160 @@ export function TeamSection() {
     );
 }
 
-export function InsideTheMachineSection() {
-    const [isOpen, setIsOpen] = useState(false);
+ 
+
+export function RoiSection() {
     return (
-        <section className="relative px-6">
-            <div className="max-w-7xl mx-auto flex flex-col items-center">
-                <Button variant="glass" className="text-sm px-4 py-2" onClick={() => setIsOpen(!isOpen)}>
-                    {isOpen ? 'Ocultar Detalles' : 'Ver Detalles'}
-                </Button>
-                {isOpen && (
-                    <div className="mt-6 p-6 border border-white/10 rounded bg-white/5 w-full max-w-5xl">
-                        <p className="text-gray-300">Arquitectura, flujo de datos y decisiones clave del proyecto.</p>
+        <section className="py-24 px-6 max-w-7xl mx-auto text-center">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                ¿Cuánto dinero estás <br />
+                <span className="text-alert-red">dejando sobre la mesa?</span>
+            </h2>
+            <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                Nuestras simulaciones muestran un aumento del 22% en la retención durante el primer trimestre.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Card className="flex flex-col items-center p-8 bg-gradient-to-b from-white/5 to-transparent border-white/10">
+                    <div className="p-4 rounded-full bg-neon-cyan/10 text-neon-cyan mb-4">
+                        <TrendingUp size={32} />
                     </div>
-                )}
+                    <div className="text-4xl font-bold text-white mb-2">+22%</div>
+                    <div className="text-gray-400 font-medium">Retención de Clientes</div>
+                </Card>
+
+                <Card className="flex flex-col items-center p-8 bg-gradient-to-b from-white/5 to-transparent border-white/10 transform scale-105 border-neon-cyan/30 shadow-[0_0_30px_rgba(100,255,218,0.1)]">
+                    <div className="p-4 rounded-full bg-green-500/10 text-green-400 mb-4">
+                        <Database size={32} />
+                    </div>
+                    <div className="text-4xl font-bold text-white mb-2">3.5x</div>
+                    <div className="text-gray-400 font-medium">ROI Estimado (Year 1)</div>
+                </Card>
+
+                <Card className="flex flex-col items-center p-8 bg-gradient-to-b from-white/5 to-transparent border-white/10">
+                    <div className="p-4 rounded-full bg-alert-red/10 text-alert-red mb-4">
+                        <Users size={32} />
+                    </div>
+                    <div className="text-4xl font-bold text-white mb-2">-45%</div>
+                    <div className="text-gray-400 font-medium">Tasa de Deserción</div>
+                </Card>
             </div>
         </section>
     );
 }
 
-export function CtaSection() {
-    return (
-        <section className="py-16 px-6 text-center">
-            <Button className="px-8 py-3">Comenzar Ahora</Button>
-        </section>
-    );
-}
  
+
+export function InsideTheMachineSection() {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <section className="relative px-6">
+            <div className="max-w-7xl mx-auto flex flex-col items-center">
+                {/* Sentinel Arrow */}
+
+
+                {/* Collapsible Content */}
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.8, ease: "easeInOut" }}
+                            className="w-full overflow-hidden"
+                        >
+                            <div className="pt-20 pb-24 border-t border-white/10 mt-[-28px] relative bg-gradient-to-b from-navy-deep to-[#050b14]">
+                                {/* Background Tech Pattern */}
+                                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent" />
+
+                                {/* Monday.com CTA at the top of collapsible content */}
+                                <div className="max-w-5xl mx-auto pt-6">
+                                    <div className="mb-8 flex justify-center">
+                                        <a
+                                            href="https://shigerubt.monday.com/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label="Organización del equipo en Monday Dev"
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/10 text-gray-200 hover:text-white hover:border-neon-cyan/50 hover:shadow-[0_0_20px_rgba(100,255,218,0.2)] transition-colors bg-white/5"
+                                        >
+                                            <Network size={18} className="text-[#1F9E8A]" />
+                                            <span className="text-sm font-medium">Organización del equipo en Monday Dev</span>
+                                            <ArrowRight size={14} className="opacity-70" />
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div className="max-w-5xl mx-auto space-y-20">
+                                    {/* Section 0: Introducción & Planteamiento */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.1 }}
+                                            className="space-y-6"
+                                        >
+                                            <div className="flex items-center gap-3 text-neon-cyan mb-2">
+                                                <Network size={24} />
+                                                <span className="font-mono text-sm tracking-widest uppercase">Contexto del Proyecto</span>
+                                            </div>
+                                            <h3 className="text-3xl font-bold text-white">Introducción & Planteamiento</h3>
+                                            <p className="text-gray-400 leading-relaxed">
+                                                Las empresas pierden clientes sin señales claras. El objetivo de <span className="text-white font-semibold">Churn Alert</span> es anticipar el abandono y activar acciones de retención con datos confiables y tiempos de respuesta mínimos.
+                                            </p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                                <div className="p-4 bg-white/5 rounded border border-white/10">
+                                                    <div className="flex items-center gap-2 text-alert-red mb-1"><Activity size={16} /><span className="font-mono text-xs uppercase">Problema</span></div>
+                                                    <p className="text-sm text-gray-300">Alta tasa de cancelación y señales dispersas; difícil detectar riesgo a tiempo.</p>
+                                                </div>
+                                                <div className="p-4 bg-white/5 rounded border border-white/10">
+                                                    <div className="flex items-center gap-2 text-neon-cyan mb-1"><TrendingUp size={16} /><span className="font-mono text-xs uppercase">Objetivo</span></div>
+                                                    <p className="text-sm text-gray-300">Predecir probabilidad de churn y clasificar riesgo para priorizar acciones.</p>
+                                                </div>
+                                                <div className="p-4 bg-white/5 rounded border border-white/10">
+                                                    <div className="flex items-center gap-2 text-blue-400 mb-1"><Cpu size={16} /><span className="font-mono text-xs uppercase">Abordaje</span></div>
+                                                    <p className="text-sm text-gray-300">Arquitectura desacoplada: DS en Python y API en Java; validación estricta y lotes CSV.</p>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: 0.2 }}
+                                        >
+                                            <Card className="bg-[#0a0f1c] p-6 border-white/10">
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center gap-2 text-gray-400 text-xs font-mono">
+                                                        <span>project_overview.md</span>
+                                                        <span className="ml-auto">v1.0</span>
+                                                    </div>
+                                                    <ul className="text-sm text-gray-300 space-y-2">
+                                                        <li className="flex items-center gap-2"><Lock size={14} className="text-neon-cyan" /><span>Endpoints protegidos con JWT</span></li>
+                                                        <li className="flex items-center gap-2"><Zap size={14} className="text-neon-cyan" /><span>Latencia baja y lote 7k+ registros</span></li>
+                                                        <li className="flex items-center gap-2"><Server size={14} className="text-alert-red" /><span>API Spring Boot + DS Flask</span></li>
+                                                    </ul>
+                                                </div>
+                                            </Card>
+                                        </motion.div>
+                                    </div>
+
+                                    {/* Section 1: Data Pipeline */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.2 }}
+                                            className="space-y-6"
+                                        >
+                                            <div className="flex items-center gap-3 text-neon-cyan mb-2">
+                                                <Scale size={24} />
+                                                <span className="font-mono text-sm tracking-widest uppercase">Análisis Técnico del Modelo</span>
+                                            </div>
+                                            <h3 className="text-3xl font-bold text-white">XGBoost: Gradient Boosted Trees para Churn</h3>
+                                            <p className="text-gray-400 leading-relaxed border-l-2 border-neon-cyan/20 pl-4">
+                                                El modelo final de <span className="text-white font-semibold">Churn Alert</span> es <span className="text-white font-semibold">XGBoost</span>, un ensamble de árboles potenciados por gradiente que corrige iterativamente errores. Captura relaciones no lineales e interacciones entre variables como <span className="font-mono text-sm bg-white/5 px-1 rounded">Contract</span>, <span className="font-mono text-sm bg-white/5 px-1 rounded">tenure</span> y <span className="font-mono text-sm bg-white/5 px-1 rounded">OnlineSecurity</span>, ofreciendo alta precisión en datos tabulares.
+                                            </p>
+                                            <p className="text-gray-400 leading-relaxed">
                                                 La regularización (L1/L2), la profundidad máxima y el <em>learning rate</em> controlan la complejidad y reducen el sobreajuste. La importancia de variables se reporta vía <em>gain</em> y <em>cover</em>, guiando decisiones sobre los principales impulsores del churn.
                                             </p>
 
@@ -265,6 +457,64 @@ export function CtaSection() {
                     >
                         <ChevronDown size={32} />
                     </motion.button>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export function CtaSection() {
+    return (
+        <section className="py-32 px-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-navy-deep to-[#02050a]" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+
+            <div className="max-w-4xl mx-auto text-center relative z-10">
+                <h2 className="text-5xl md:text-6xl font-bold text-white mb-8 tracking-tight">
+                    Deja de adivinar por qué <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-blue-500">tus clientes se van.</span>
+                </h2>
+                <p className="text-xl text-gray-400 mb-12">
+                    Tus clientes te están enviando señales de despedida. ¿Estás escuchando?
+                    <br />
+                    Churn Alert traduce el silencio de tus datos en acciones de rescate inmediatas.
+                </p>
+
+                <Button 
+                    onClick={() => alert("¡Simulación finalizada! Agradecemos profundamente a Alura Latam y Oracle por la oportunidad otorgada en este Hackathon.")}
+                    className="mx-auto text-xl px-12 py-6 h-auto shadow-[0_0_50px_rgba(100,255,218,0.2)] hover:shadow-[0_0_80px_rgba(100,255,218,0.4)]"
+                >
+                    <CalendarCheck className="mr-3" />
+                    Reserva una Sesión Estratégica
+                </Button>
+            </div>
+        </section>
+    );
+}
+
+// Nueva sección: Tecnologías del Proyecto
+export function TechnologiesSection({ embedded = false }) {
+    const categories = [
+        {
+            name: 'Data Science',
+            color: 'text-neon-cyan',
+            icon: <Cpu size={18} />,
+            items: [
+                { t: 'Python 3.10+', d: 'Lenguaje base del microservicio DS; prototipa y despliega modelos rápidamente.', Icon: SiPython },
+                { t: 'Flask 3', d: 'Microframework que expone el modelo vía HTTP con rutas ligeras y mantenibles.', Icon: SiFlask },
+                { t: 'scikit-learn', d: 'Entrenamiento, métricas y pipelines reproducibles para datos tabulares.', Icon: SiScikitlearn },
+                { t: 'pandas', d: 'Procesa y valida las 20 variables canónicas con operaciones vectorizadas.', Icon: SiPandas },
+                { t: 'XGBoost', d: 'Modelo eficiente y preciso para clasificación con explicabilidad básica.' },
+                { t: 'joblib', d: 'Serializa el pipeline para cargar en producción sin reentrenar.' },
+            ],
+        },
+        {
+            name: 'Backend',
+            color: 'text-alert-red',
+            icon: <Server size={18} />,
+            items: [
+                { t: 'Java 17', d: 'LTS estable y performante; base de la API con mejoras modernas de GC.', Icon: SiOpenjdk },
+                { t: 'Spring Boot 3', d: 'Arranque rápido, configuración mínima y observabilidad integrada.', Icon: SiSpring },
                 { t: 'Spring Security', d: 'Protege endpoints con JWT y reglas de autorización claras.', Icon: SiSpring },
                 { t: 'Spring Data JPA', d: 'Persistencia con repositorios declarativos para auditoría de predicciones.', Icon: SiSpring },
                 { t: 'Validation', d: 'Ergonomía para errores 400 claros y por campo en requests.', Icon: SiSpring },
