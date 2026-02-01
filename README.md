@@ -204,6 +204,142 @@ docker compose up --build
 - Flasgger (alternativo): `http://localhost:8000/flasgger`
 - Health (Actuator): `http://localhost:8080/actuator/health`
 
+## API consumible
+
+Esta sección documenta cómo consumir la API expuesta por el backend y el servicio DS, cómo autenticarse, y dónde probarla rápidamente.
+
+### Base URLs y documentación
+- Backend (Spring Boot)
+  - Base: `http://localhost:8080/api`
+  - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+  - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- DS service (Flask)
+  - Base: `http://localhost:8000`
+  - Swagger UI: `http://localhost:8000/apidocs/`
+  - Swagger JSON: `http://localhost:8000/swagger.json`
+- Frontend Playground
+  - Dashboard → “API Playground” (en el sidebar)
+
+### Autenticación (JWT)
+- Tipo: Bearer Token
+- Login:
+  - Endpoint: `POST /api/auth/login`
+  - Body:
+    ```json
+    { "email": "admin@local", "password": "Admin123!" }
+    ```
+  - Respuesta (parcial): `{ "token": "<jwt>", "expiresIn": 3600 }`
+- Usar el token: Header `Authorization: Bearer <jwt>`
+
+### Endpoints principales (Backend)
+- `POST /api/churn/predict`
+  - Predice riesgo de churn para un cliente.
+  - Request JSON (20 variables canónicas):
+    ```json
+    {
+      "gender": "Male",
+      "SeniorCitizen": 0,
+      "Partner": "No",
+      "Dependents": "Yes",
+      "tenure": 66,
+      "PhoneService": "No",
+      "MultipleLines": "No phone service",
+      "InternetService": "DSL",
+      "OnlineSecurity": "No",
+      "OnlineBackup": "No",
+      "DeviceProtection": "No",
+      "TechSupport": "No",
+      "StreamingTV": "Yes",
+      "StreamingMovies": "Yes",
+      "Contract": "Month-to-month",
+      "PaperlessBilling": "Yes",
+      "PaymentMethod": "Mailed check",
+      "MonthlyCharges": 97.69,
+      "TotalCharges": 5389.02
+    }
+    ```
+  - Response (enriquecida):
+    ```json
+    {
+      "metadata": { "model_version": "v1.0" },
+      "prediction": {
+        "churn_probability": 0.72,
+        "will_churn": 1,
+        "risk_level": "Alto Riesgo",
+        "confidence_score": 0.85
+      },
+      "business_logic": { "suggested_action": "Retención Prioritaria / Oferta de Lealtad" },
+      "prevision": "Va a cancelar",
+      "probabilidad": 0.72,
+      "top_features": ["Contract", "tenure", "OnlineSecurity"]
+    }
+    ```
+
+- `POST /api/churn/predict/batch`
+  - Procesa una lista JSON de solicitudes de predicción.
+  - Entrada: `[ { ...20 variables... }, { ... } ]`
+  - Salida: `{ "items": [...], "total": N, "cancelaciones": M }`
+
+- `POST /api/churn/predict/batch/csv`
+  - `multipart/form-data` con `file` (CSV) y encabezados canónicos.
+  - Normaliza `TotalCharges` vacío/nulo a `0.0`.
+
+- `POST /api/churn/evaluate/batch/csv`
+  - `multipart/form-data` con `file` (CSV) incluyendo columna `Churn` (`Yes`/`No`).
+  - Salida: métricas `{ total, tp, tn, fp, fn, accuracy, precision, recall, f1 }`.
+
+- `GET /api/churn/stats`
+  - Totales, tasa de churn y últimas predicciones.
+
+- `GET /api/churn/predictions/top-risk`
+  - Últimas predicciones con mayor probabilidad de churn.
+
+- `DELETE /api/churn/predictions/clear`
+  - Elimina todos los registros de predicción.
+
+### Endpoint DS (Servicio de ML)
+- `POST /predict`
+  - Request: `{ "features": { ... 20 variables canónicas ... } }` (también acepta el objeto canónico directamente).
+  - Respuesta: igual estructura enriquecida (ver ejemplo de backend).
+
+### API Playground (Frontend)
+- Ubicación: Dashboard → “API Playground”.
+- Uso:
+  - Izquierda: editor de JSON, método y endpoint (por ejemplo `/churn/predict`).
+  - Derecha: respuesta formateada.
+  - Envía con `Authorization: Bearer <jwt>` desde `localStorage.token`.
+
+### Errores (formato estándar)
+```json
+{ "timestamp": "2026-02-01T12:00:00Z", "status": 400, "error": "Bad Request", "message": "Detalle del error", "path": "/api/churn/predict" }
+```
+
+### Ejemplos rápidos (Windows PowerShell)
+```powershell
+# Login y headers
+$login = @{ email="admin@local"; password="Admin123!" } | ConvertTo-Json
+$auth = Invoke-RestMethod -Method POST -Uri http://localhost:8080/api/auth/login -ContentType application/json -Body $login
+$headers = @{ Authorization = "Bearer $($auth.token)"; "Content-Type"="application/json" }
+
+# Payload de prueba
+$payload = @{
+  gender="Male"; SeniorCitizen=0; Partner="No"; Dependents="Yes"; tenure=66; PhoneService="No";
+  MultipleLines="No phone service"; InternetService="DSL"; OnlineSecurity="No"; OnlineBackup="No";
+  DeviceProtection="No"; TechSupport="No"; StreamingTV="Yes"; StreamingMovies="Yes";
+  Contract="Month-to-month"; PaperlessBilling="Yes"; PaymentMethod="Mailed check";
+  MonthlyCharges=97.69; TotalCharges=5389.02
+} | ConvertTo-Json
+
+# Predict
+Invoke-RestMethod -Method POST -Uri http://localhost:8080/api/churn/predict -Headers $headers -Body $payload
+```
+
+### Exportar OpenAPI
+```powershell
+Invoke-RestMethod -Uri http://localhost:8080/v3/api-docs -OutFile docs/openapi.json
+Invoke-RestMethod -Uri http://localhost:8000/swagger.json -OutFile docs/ds-swagger.json
+```
+
 ## Postman Collection
 - Importa `postman/ChurnInsight.postman_collection.json` y ejecuta los ejemplos incluidos.
 - Puedes actualizar la colección desde OpenAPI con:
