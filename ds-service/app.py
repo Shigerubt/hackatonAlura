@@ -286,37 +286,37 @@ def predict():
                 description: OK
         """
         payload = request.get_json(silent=True) or {}
-    feats = payload.get("features") or payload
-    # Enforce input rules: case-sensitive strings, TotalCharges null->0.0
-    if "TotalCharges" in feats and (feats["TotalCharges"] is None or feats["TotalCharges"] == ""):
-        feats["TotalCharges"] = 0.0
+        feats = payload.get("features") or payload
+        # Enforce input rules: case-sensitive strings, TotalCharges null->0.0
+        if "TotalCharges" in feats and (feats["TotalCharges"] is None or feats["TotalCharges"] == ""):
+                feats["TotalCharges"] = 0.0
 
-    # Try model first, fallback to heuristic
-    out = predict_with_model(feats)
-    if out is None:
-        out = heuristic_score(feats)
-    label, prob, top = out
+        # Try model first, fallback to heuristic
+        out = predict_with_model(feats)
+        if out is None:
+                out = heuristic_score(feats)
+        label, prob, top = out
 
-    # Enriched response
-    risk = "Alto Riesgo" if prob >= 0.66 else ("Riesgo Medio" if prob >= 0.33 else "Bajo Riesgo")
-    will = 1 if prob >= 0.5 else 0
-    conf = max(0.5, abs(prob - 0.5) * 2)
-    action = "Retención Prioritaria / Oferta de Lealtad" if will == 1 else "Upsell / Programa de Fidelización"
+        # Enriched response
+        risk = "Alto Riesgo" if prob >= 0.66 else ("Riesgo Medio" if prob >= 0.33 else "Bajo Riesgo")
+        will = 1 if prob >= 0.5 else 0
+        conf = max(0.5, abs(prob - 0.5) * 2)
+        action = "Retención Prioritaria / Oferta de Lealtad" if will == 1 else "Upsell / Programa de Fidelización"
 
-    return jsonify({
-        "metadata": {"model_version": MODEL_VERSION, "timestamp": os.getenv("MODEL_TIMESTAMP", "")},
-        "prediction": {
-            "churn_probability": prob,
-            "will_churn": will,
-            "risk_level": risk,
-            "confidence_score": conf
-        },
-        "business_logic": {"suggested_action": action},
-        # Legacy keys for backward compatibility
-        "prevision": label,
-        "probabilidad": prob,
-        "top_features": top
-    })
+        return jsonify({
+                "metadata": {"model_version": MODEL_VERSION, "timestamp": os.getenv("MODEL_TIMESTAMP", "")},
+                "prediction": {
+                        "churn_probability": prob,
+                        "will_churn": will,
+                        "risk_level": risk,
+                        "confidence_score": conf
+                },
+                "business_logic": {"suggested_action": action},
+                # Legacy keys for backward compatibility
+                "prevision": label,
+                "probabilidad": prob,
+                "top_features": top
+        })
 
 
 @app.route("/")
