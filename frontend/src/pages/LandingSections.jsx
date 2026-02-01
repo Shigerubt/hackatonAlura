@@ -1,20 +1,13 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Terminal, Cpu, Database, Network, TrendingUp, Users, ArrowRight, Github, Linkedin, CalendarCheck, Code2, Lock, Zap, ChevronDown, Activity, Server, Scale, Mic } from 'lucide-react';
-import { 
-    SiPython, SiFlask, SiScikitlearn, SiPandas, SiOpenjdk, SiSpring, SiOpenapiinitiative, SiDocker, 
-    SiReact, SiVite, SiTailwindcss, SiFramer, SiMysql, SiApachemaven, SiStreamlit, SiPostman, SiInsomnia, SiSwagger, SiMondaydotcom 
-} from 'react-icons/si';
-import insightBot from '../assets/insight-bot.png';
+import { TrendingUp, Users, Github, Linkedin } from 'lucide-react';
 
-// Minimal SVG flags (approximate) for team nationality badges
 function FlagIcon({ code, size = 16 }) {
     const w = size;
     const h = Math.round(size * 0.75);
     switch (code) {
-        case 'GT': // Guatemala (blue-white-blue)
+        case 'GT':
             return (
                 <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Guatemala flag">
                     <rect width="1" height="2" x="0" y="0" fill="#4997D0" />
@@ -22,7 +15,7 @@ function FlagIcon({ code, size = 16 }) {
                     <rect width="1" height="2" x="2" y="0" fill="#4997D0" />
                 </svg>
             );
-        case 'MX': // Mexico (green-white-red)
+        case 'MX':
             return (
                 <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Mexico flag">
                     <rect width="1" height="2" x="0" y="0" fill="#006847" />
@@ -30,7 +23,7 @@ function FlagIcon({ code, size = 16 }) {
                     <rect width="1" height="2" x="2" y="0" fill="#CE1126" />
                 </svg>
             );
-        case 'PE': // Peru (red-white-red)
+        case 'PE':
             return (
                 <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Peru flag">
                     <rect width="1" height="2" x="0" y="0" fill="#D91023" />
@@ -38,7 +31,7 @@ function FlagIcon({ code, size = 16 }) {
                     <rect width="1" height="2" x="2" y="0" fill="#D91023" />
                 </svg>
             );
-        case 'CO': // Colombia (yellow-blue-red)
+        case 'CO':
             return (
                 <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Colombia flag">
                     <rect width="3" height="1" x="0" y="0" fill="#FCD116" />
@@ -46,132 +39,28 @@ function FlagIcon({ code, size = 16 }) {
                     <rect width="3" height="0.5" x="0" y="1.5" fill="#CE1126" />
                 </svg>
             );
-        export function TeamSection() {
-            const team = [
-                {
-                    name: "Hugo Arias",
-                    role: "Project Manager & Backend Lead",
-                    image: hugoImg,
-                    linkedin: "https://www.linkedin.com/in/shigerubt/",
-                    github: "https://github.com/shigerubt",
-                    flagCode: "GT",
-                },
-                {
-                    name: "Agueda J. Guzman",
-                    role: "Backend Manager",
-                    image: aguedaImg,
-                    linkedin: "https://www.linkedin.com/in/agueda-talavera-42a2a42a5/",
-                    flagCode: "MX",
-                },
-                {
-                    name: "Jhon A. Alonzo Huamán",
-                    role: "DS Strategy Manager",
-                    image: jhonImg,
-                    linkedin: "https://www.linkedin.com/in/jalonzoh/",
-                    flagCode: "PE",
-                },
-                {
-                    name: "Heriberto Turpo Quiro",
-                    role: "Data Scientist",
-                    image: heribertoImg,
-                    linkedin: "https://www.linkedin.com/in/heriberto-turpo-quiro/",
-                    flagCode: "PE",
-                },
-                {
-                    name: "Gabriel Franco",
-                    role: "Pitch Speaker",
-                    image: gabrielImg,
-                    linkedin: "https://www.linkedin.com/in/lgab/",
-                    flagCode: "CO",
-                },
-                {
-                    name: "Roxana Z. Bautista",
-                    role: "Backend Engineer",
-                    image: roxiImg,
-                    linkedin: "https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/",
-                    flagCode: "MX",
-                },
-                {
-                    name: "Vanessa S. Angulo",
-                    role: "Backend Engineer",
-                    image: vaneImg,
-                    linkedin: "https://www.linkedin.com/in/vanessaangulose/",
-                    flagCode: "MX",
-                },
-                {
-                    name: "Kevin S. Morales",
-                    role: "Backend Engineer",
-                    image: kevinImg,
-                    linkedin: "https://www.linkedin.com/in/kevin-morales-6431b72a2",
-                    flagCode: "CO",
-                },
-            ];
+        default:
+            return null;
+    }
+}
 
-            return (
-                <section className="py-24 px-6 border-t border-white/5 bg-navy-deep">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold text-white mb-4">Meet the Sentinels</h2>
-                            <p className="text-gray-400">Los arquitectos detrás de la predicción y los guardianes de la retención.</p>
-                        </div>
+export function OperatingBrainSection() {
+    return (
+        <section className="py-16 px-6 max-w-7xl mx-auto">
+            <div className="text-center">
+                <h2 className="text-3xl font-bold mb-3">Cerebro Operativo</h2>
+                <p className="text-gray-400">Arquitectura desacoplada para predicciones confiables y rápidas.</p>
+            </div>
+        </section>
+    );
+}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {team.map((member, idx) => (
-                                <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
-                                    <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors relative">
-                                        {member.image ? (
-                                            <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
-                                        )}
-                                        {member.role === 'Pitch Speaker' && (
-                                            <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white/10 border border-neon-cyan/40 text-neon-cyan shadow">
-                                                <Mic size={12} />
-                                            </span>
-                                        )}
-                                    </div>
-                                    <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center gap-2">
-                                        <span>{member.name}</span>
-                                        {member.flagCode && (
-                                            <span className="inline-flex items-center"><FlagIcon code={member.flagCode} size={14} /></span>
-                                        )}
-                                    </h3>
-                                    <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono flex items-center justify-center gap-1">
-                                        {member.role === 'Pitch Speaker' && <Mic size={12} className="text-neon-cyan" />}
-                                        <span>{member.role === 'Pitch Speaker' ? 'Data Scientist • Pitch Speaker' : member.role}</span>
-                                    </p>
-                                    <div className="flex justify-center gap-4 text-gray-400">
-                                        {member.github && (
-                                            <a href={member.github} target="_blank" rel="noopener noreferrer">
-                                                <Github size={16} className="hover:text-white transition-colors" />
-                                            </a>
-                                        )}
-                                        {member.linkedin && (
-                                            <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
-                                                <Linkedin size={16} className="hover:text-white transition-colors" />
-                                            </a>
-                                        )}
-                                    </div>
-                                </Card>
-                            ))}
-                        </div>
-
-                        {/* Monday.com CTA moved to InsideTheMachineSection */}
-                    </div>
-                </section>
-            );
-        }
-
-        export function InsideTheMachineSection() {
-            const [isOpen, setIsOpen] = useState(false);
-            return (
-                <section className="relative px-6">
-                    <div className="max-w-7xl mx-auto flex flex-col items-center">
-                            <div className="p-2 rounded bg-neon-cyan/10 text-neon-cyan"><Code2 size={18} /></div>
-                            <span>Zero-downtime integration</span>
-                        </li>
-                    </ul>
-                </div>
+export function ApiIntegrationSection() {
+    return (
+        <section className="py-16 px-6 max-w-7xl mx-auto">
+            <div className="text-center">
+                <h2 className="text-3xl font-bold mb-3">Integración de API</h2>
+                <p className="text-gray-400">Backend Spring + DS Flask con documentación Swagger.</p>
             </div>
         </section>
     );
@@ -187,28 +76,19 @@ export function RoiSection() {
             <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
                 Nuestras simulaciones muestran un aumento del 22% en la retención durante el primer trimestre.
             </p>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="flex flex-col items-center p-8 bg-gradient-to-b from-white/5 to-transparent border-white/10">
-                    <div className="p-4 rounded-full bg-neon-cyan/10 text-neon-cyan mb-4">
-                        <TrendingUp size={32} />
-                    </div>
+                <Card className="flex flex-col items-center p-8 bg-white/5 border-white/10">
+                    <TrendingUp size={32} className="text-neon-cyan mb-4" />
                     <div className="text-4xl font-bold text-white mb-2">+22%</div>
                     <div className="text-gray-400 font-medium">Retención de Clientes</div>
                 </Card>
-
-                <Card className="flex flex-col items-center p-8 bg-gradient-to-b from-white/5 to-transparent border-white/10 transform scale-105 border-neon-cyan/30 shadow-[0_0_30px_rgba(100,255,218,0.1)]">
-                    <div className="p-4 rounded-full bg-green-500/10 text-green-400 mb-4">
-                        <Database size={32} />
-                    </div>
+                <Card className="flex flex-col items-center p-8 bg-white/5 border-white/10">
+                    <Users size={32} className="text-green-400 mb-4" />
                     <div className="text-4xl font-bold text-white mb-2">3.5x</div>
                     <div className="text-gray-400 font-medium">ROI Estimado (Year 1)</div>
                 </Card>
-
-                <Card className="flex flex-col items-center p-8 bg-gradient-to-b from-white/5 to-transparent border-white/10">
-                    <div className="p-4 rounded-full bg-alert-red/10 text-alert-red mb-4">
-                        <Users size={32} />
-                    </div>
+                <Card className="flex flex-col items-center p-8 bg-white/5 border-white/10">
+                    <Users size={32} className="text-alert-red mb-4" />
                     <div className="text-4xl font-bold text-white mb-2">-45%</div>
                     <div className="text-gray-400 font-medium">Tasa de Deserción</div>
                 </Card>
@@ -219,95 +99,34 @@ export function RoiSection() {
 
 export function TeamSection() {
     const team = [
-        { 
-            name: "Hugo Arias", 
-            role: "Project Manager & Backend Lead", 
-            image: hugoImg,
-            linkedin: "https://www.linkedin.com/in/shigerubt/",
-            github: "https://github.com/shigerubt",
-            flagCode: "GT"
-        },
-        { 
-            name: "Agueda J. Guzman", 
-            role: "Backend Manager", 
-            image: aguedaImg,
-            linkedin: "https://www.linkedin.com/in/agueda-talavera-42a2a42a5/", 
-            flagCode: "MX"
-        },
-        { 
-            name: "Jhon A. Alonzo Huamán", 
-            role: "DS Strategy Manager", 
-            image: jhonImg,
-            linkedin: "https://www.linkedin.com/in/jalonzoh/", 
-            flagCode: "PE"
-        },
-        { 
-            name: "Heriberto Turpo Quiro", 
-            role: "Data Scientist", 
-            image: heribertoImg,
-            linkedin: "https://www.linkedin.com/in/heriberto-turpo-quiro/", 
-            flagCode: "PE"
-        },
-        { 
-            name: "Gabriel Franco", 
-            role: "Pitch Speaker", 
-            image: gabrielImg,
-            linkedin: "https://www.linkedin.com/in/lgab/", 
-            flagCode: "CO"
-        },
-        { 
-                flagCode: "GT",
-            role: "Backend Engineer", 
-            image: roxiImg,
-            linkedin: "https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/", 
-            flagCode: "MX"
-        },
-        { 
-                flagCode: "MX",
-            role: "Backend Engineer", 
-            image: vaneImg,
-            linkedin: "https://www.linkedin.com/in/vanessaangulose/", 
-            flagCode: "MX"
-        },
-        { 
-                flagCode: "PE",
-            role: "Backend Engineer", 
-            image: kevinImg,
-            linkedin: "https://www.linkedin.com/in/kevin-morales-6431b72a2", 
-            flagCode: "CO"
-        },
+        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', flagCode: 'GT', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/' },
+        { name: 'Agueda J. Guzman', role: 'Backend Manager', flagCode: 'MX', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/' },
+        { name: 'Jhon A. Alonzo Huamán', role: 'DS Strategy Manager', flagCode: 'PE', linkedin: 'https://www.linkedin.com/in/jalonzoh/' },
+        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', flagCode: 'PE', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/' },
+        { name: 'Gabriel Franco', role: 'Pitch Speaker', flagCode: 'CO', linkedin: 'https://www.linkedin.com/in/lgab/' },
+        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', flagCode: 'MX', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/' },
+        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', flagCode: 'MX', linkedin: 'https://www.linkedin.com/in/vanessaangulose/' },
+        { name: 'Kevin S. Morales', role: 'Backend Engineer', flagCode: 'CO', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2' }
     ];
-                flagCode: "PE",
     return (
         <section className="py-24 px-6 border-t border-white/5 bg-navy-deep">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-bold text-white mb-4">Meet the Sentinels</h2>
                     <p className="text-gray-400">Los arquitectos detrás de la predicción y los guardianes de la retención.</p>
-                flagCode: "CO",
-
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {team.map((member, idx) => (
-                        <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
-                            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors relative">
-                                {member.image ? (
-                flagCode: "MX",
-                                ) : (
-                                    <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
-                                )}
-                                {member.role === 'Pitch Speaker' && (
-                                    <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white/10 border border-neon-cyan/40 text-neon-cyan shadow">
-                                        <Mic size={12} />
-                flagCode: "MX",
-                                )}
+                        <Card key={idx} className="group p-6 text-center border-white/5">
+                            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10">
+                                <Users className="text-gray-500" size={28} />
                             </div>
                             <h3 className="text-sm font-bold text-white leading-tight h-10 flex items-center justify-center gap-2">
-                                {member.name}
-                                {member.flagCode && <FlagIcon code={member.flagCode} />}
+                                <span>{member.name}</span>
+                                {member.flagCode && <span className="inline-flex items-center"><FlagIcon code={member.flagCode} size={14} /></span>}
                             </h3>
-                flagCode: "CO",
-                                {member.role === 'Pitch Speaker' && <Mic size={12} className="text-neon-cyan" />}
-                                <span>{member.role === 'Pitch Speaker' ? 'Data Scientist • Pitch Speaker' : member.role}</span>
+                            <p className="text-[10px] text-neon-cyan mt-1 mb-4 uppercase tracking-widest font-mono">
+                                {member.role}
                             </p>
                             <div className="flex justify-center gap-4 text-gray-400">
                                 {member.github && (
@@ -334,70 +153,26 @@ export function InsideTheMachineSection() {
     return (
         <section className="relative px-6">
             <div className="max-w-7xl mx-auto flex flex-col items-center">
-                {/* Sentinel Arrow */}
+                <Button variant="glass" className="text-sm px-4 py-2" onClick={() => setIsOpen(!isOpen)}>
+                    {isOpen ? 'Ocultar Detalles' : 'Ver Detalles'}
+                </Button>
+                {isOpen && (
+                    <div className="mt-6 p-6 border border-white/10 rounded bg-white/5 w-full max-w-5xl">
+                        <p className="text-gray-300">Arquitectura, flujo de datos y decisiones clave del proyecto.</p>
+                    </div>
+                )}
+            </div>
+        </section>
+    );
+}
 
-
-                {/* Collapsible Content */}
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.8, ease: "easeInOut" }}
-                            className="w-full overflow-hidden"
-                        >
-                            <div className="pt-20 pb-24 border-t border-white/10 mt-[-28px] relative bg-gradient-to-b from-navy-deep to-[#050b14]">
-                                {/* Background Tech Pattern */}
-                                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent" />
-
-                                {/* Monday.com CTA at the top of collapsible content */}
-                                <div className="max-w-5xl mx-auto pt-6">
-                                    <div className="mb-8 flex justify-center">
-                                        <a
-                                            href="https://shigerubt.monday.com/"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            aria-label="Organización del equipo en Monday Dev"
-                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/10 text-gray-200 hover:text-white hover:border-neon-cyan/50 hover:shadow-[0_0_20px_rgba(100,255,218,0.2)] transition-colors bg-white/5"
-                                        >
-                                            <SiMondaydotcom className="text-[#1F9E8A]" size={18} />
-                                            <span className="text-sm font-medium">Organización del equipo en Monday Dev</span>
-                                            <ArrowRight size={14} className="opacity-70" />
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div className="max-w-5xl mx-auto space-y-20">
-                                    {/* Section 0: Introducción & Planteamiento */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                                        <motion.div
-                                            initial={{ opacity: 0, x: -20 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.1 }}
-                                            className="space-y-6"
-                                        >
-                                            <div className="flex items-center gap-3 text-neon-cyan mb-2">
-                                                <Network size={24} />
-                                                <span className="font-mono text-sm tracking-widest uppercase">Contexto del Proyecto</span>
-                                            </div>
-                                            <h3 className="text-3xl font-bold text-white">Introducción & Planteamiento</h3>
-                                            <p className="text-gray-400 leading-relaxed">
-                                                Las empresas pierden clientes sin señales claras. El objetivo de <span className="text-white font-semibold">Churn Alert</span> es anticipar el abandono y activar acciones de retención con datos confiables y tiempos de respuesta mínimos.
-                                            </p>
-                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                                <div className="p-4 bg-white/5 rounded border border-white/10">
-                                                    <div className="flex items-center gap-2 text-alert-red mb-1"><Activity size={16} /><span className="font-mono text-xs uppercase">Problema</span></div>
-                                                    <p className="text-sm text-gray-300">Alta tasa de cancelación y señales dispersas; difícil detectar riesgo a tiempo.</p>
-                                                </div>
-                                                <div className="p-4 bg-white/5 rounded border border-white/10">
-                                                    <div className="flex items-center gap-2 text-neon-cyan mb-1"><TrendingUp size={16} /><span className="font-mono text-xs uppercase">Objetivo</span></div>
-                                                    <p className="text-sm text-gray-300">Predecir probabilidad de churn y clasificar riesgo para priorizar acciones.</p>
-                                                </div>
-                                                <div className="p-4 bg-white/5 rounded border border-white/10">
-                                                    <div className="flex items-center gap-2 text-blue-400 mb-1"><Cpu size={16} /><span className="font-mono text-xs uppercase">Abordaje</span></div>
-                                                    <p className="text-sm text-gray-300">Arquitectura desacoplada: DS en Python y API en Java; validación estricta y lotes CSV.</p>
-                                                </div>
+export function CtaSection() {
+    return (
+        <section className="py-16 px-6 text-center">
+            <Button className="px-8 py-3">Comenzar Ahora</Button>
+        </section>
+    );
+}
                                             </div>
                                         </motion.div>
 
