@@ -85,12 +85,11 @@ public class ChurnController {
     }
     
     @PostMapping(path = "/evaluate/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Evaluación CSV", description = "CSV con etiqueta 'Churn' (Yes/No) para calcular métricas (accuracy, precision, recall, f1).")
+    @Operation(summary = "Evaluación CSV", description = "CSV con etiqueta 'Churn' (Yes/No) para calcular métricas: accuracy, precision, recall y f1.")
     public Map<String, Object> evaluateBatchCsv(@RequestPart("file") MultipartFile file) throws Exception {
         try (var reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
              var parser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim())) {
             var headerMap = parser.getHeaderMap();
-            // Verificar columna Churn
             boolean hasChurn = headerMap.keySet().stream().anyMatch(h -> "churn".equalsIgnoreCase(h));
             if (!hasChurn) {
                 throw new IllegalArgumentException("El CSV de evaluación debe incluir columna 'Churn' con valores 'Yes'/'No'.");
@@ -103,9 +102,10 @@ public class ChurnController {
                 ChurnRequest req = toRequest(r, headerMap);
                 String churnVal = getHeaderValue(r, headerMap, "Churn");
                 int actual = parseChurnLabel(churnVal);
+
                 ChurnPredictionResponse res = churnService.predict(req);
-                @PostMapping(path = "/predict", consumes = MediaType.APPLICATION_JSON_VALUE)
-                @Operation(summary = "Predicción individual", description = "Recibe 20 variables canónicas y devuelve predicción enriquecida")
+                int pred = ("Va a cancelar".equalsIgnoreCase(res.getPrevision())) ? 1 : 0;
+
                 if (pred == 1 && actual == 1) tp++;
                 else if (pred == 0 && actual == 0) tn++;
                 else if (pred == 1 && actual == 0) fp++;
@@ -113,27 +113,23 @@ public class ChurnController {
             }
 
             double precision = (tp + fp) == 0 ? 0.0 : ((double) tp) / (tp + fp);
-                @GetMapping(path = "/stats")
-                @Operation(summary = "Estadísticas", description = "Resumen de predicciones y tasas de churn")
+            double recall = (tp + fn) == 0 ? 0.0 : ((double) tp) / (tp + fn);
             double accuracy = total == 0 ? 0.0 : ((double) (tp + tn)) / total;
             double f1 = (precision + recall) == 0 ? 0.0 : (2 * precision * recall) / (precision + recall);
 
             log.info("/evaluate/batch/csv: total={}, tp={}, tn={}, fp={}, fn={}, acc={}", total, tp, tn, fp, fn, String.format("%.3f", accuracy));
-                @GetMapping("/predictions/top-risk")
-                @Operation(summary = "Top riesgo", description = "Top 20 predicciones con mayor probabilidad")
+            return Map.of(
                     "total", total,
                     "tp", tp,
                     "tn", tn,
                     "fp", fp,
-                @DeleteMapping("/predictions/clear")
-                @Operation(summary = "Limpiar datos", description = "Elimina todas las predicciones persistidas")
+                    "fn", fn,
                     "accuracy", accuracy,
                     "precision", precision,
                     "recall", recall,
                     "f1", f1
             );
-                @PostMapping(path = "/predict/batch", consumes = MediaType.APPLICATION_JSON_VALUE)
-                @Operation(summary = "Batch JSON", description = "Procesa una lista de solicitudes de predicción")
+        }
     }
 
     private ChurnRequest toRequest(CSVRecord r, java.util.Map<String, Integer> headerMap) {
@@ -146,8 +142,7 @@ public class ChurnController {
 
             java.util.function.Function<String, String> getVal = (key) -> {
                 Integer idx = lower.get(key.toLowerCase());
-                @PostMapping(path = "/predict/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-                @Operation(summary = "Batch CSV", description = "Procesa un CSV con encabezados canónicos y devuelve agregados")
+                if (idx == null) return null;
                 String v = r.get(idx);
                 return v;
             };
@@ -158,8 +153,6 @@ public class ChurnController {
             c.setPartner(reqOrThrow(getVal.apply("Partner"), r));
             c.setDependents(reqOrThrow(getVal.apply("Dependents"), r));
             c.setPhoneService(reqOrThrow(getVal.apply("PhoneService"), r));
-                @PostMapping(path = "/evaluate/batch/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-                @Operation(summary = "Evaluación CSV", description = "Evalúa predicciones contra la columna 'Churn' (Yes/No) y devuelve métricas")
             c.setInternetService(reqOrThrow(getVal.apply("InternetService"), r));
             c.setOnlineSecurity(reqOrThrow(getVal.apply("OnlineSecurity"), r));
             c.setOnlineBackup(reqOrThrow(getVal.apply("OnlineBackup"), r));
