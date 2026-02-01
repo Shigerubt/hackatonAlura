@@ -11,7 +11,28 @@ except Exception:
     joblib = None
 
 app = Flask(__name__)
-swagger = Swagger(app)
+
+# Configure Flasgger (Swagger 2.0) and serve UI at /apidocs/
+swagger_template = {
+    "swagger": "2.0",
+    "info": {"title": "Hackaton DS API", "version": "1.0.0"},
+    "basePath": "/"
+}
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec_1",
+            "route": "/apispec_1.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/apidocs/"
+}
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 
 # Heuristic fallback model (canonical fields)
@@ -266,11 +287,13 @@ def predict_with_model(features: dict) -> Optional[Tuple[str, float, List[str]]]
 @app.route("/predict", methods=["POST"])
 def predict():
         """
-        Predicción de churn (servicio DS)
+        Predict churn
         ---
         tags:
             - DS
         consumes:
+            - application/json
+        produces:
             - application/json
         parameters:
             - in: body
@@ -281,9 +304,27 @@ def predict():
                     properties:
                         features:
                             type: object
+                            description: 20 canonical variables (Telco schema)
         responses:
             200:
-                description: OK
+                description: Enriched response with legacy compatibility
+                schema:
+                    type: object
+                    properties:
+                        metadata:
+                            type: object
+                        prediction:
+                            type: object
+                        business_logic:
+                            type: object
+                        prevision:
+                            type: string
+                        probabilidad:
+                            type: number
+                        top_features:
+                            type: array
+                            items:
+                                type: string
         """
         payload = request.get_json(silent=True) or {}
         feats = payload.get("features") or payload
