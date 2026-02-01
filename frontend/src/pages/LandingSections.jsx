@@ -124,14 +124,14 @@ export function ApiIntegrationSection() {
 
 export function TeamSection() {
     const team = [
-        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/', flagCode: 'GT' },
-        { name: 'Agueda J. Guzman', role: 'Backend Manager', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/', flagCode: 'MX' },
-        { name: 'Jhon A. Alonzo Huamín', role: 'DS Strategy Manager', linkedin: 'https://www.linkedin.com/in/jalonzoh/', flagCode: 'PE' },
-        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/', flagCode: 'PE' },
-        { name: 'Gabriel Franco', role: 'Pitch Speaker', linkedin: 'https://www.linkedin.com/in/lgab/', flagCode: 'CO' },
-        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/', flagCode: 'MX' },
-        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', linkedin: 'https://www.linkedin.com/in/vanessaangulose/', flagCode: 'MX' },
-        { name: 'Kevin S. Morales', role: 'Backend Engineer', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2', flagCode: 'CO' },
+        { name: 'Hugo Arias', role: 'Project Manager & Backend Lead', img: '/profile-pictures/Hugo.jpg', github: 'https://github.com/shigerubt', linkedin: 'https://www.linkedin.com/in/shigerubt/', flagCode: 'GT' },
+        { name: 'Agueda J. Guzman', role: 'Backend Manager', img: '/profile-pictures/Agueda.jpeg', linkedin: 'https://www.linkedin.com/in/agueda-talavera-42a2a42a5/', flagCode: 'MX' },
+        { name: 'Jhon A. Alonzo Huamín', role: 'DS Strategy Manager', img: '/profile-pictures/Jhon.jpeg', linkedin: 'https://www.linkedin.com/in/jalonzoh/', flagCode: 'PE' },
+        { name: 'Heriberto Turpo Quiro', role: 'Data Scientist', img: '/profile-pictures/Heriberto.jpg', linkedin: 'https://www.linkedin.com/in/heriberto-turpo-quiro/', flagCode: 'PE' },
+        { name: 'Gabriel Franco', role: 'Pitch Speaker', img: '/profile-pictures/Gabriel.jpeg', linkedin: 'https://www.linkedin.com/in/lgab/', flagCode: 'CO' },
+        { name: 'Roxana Z. Bautista', role: 'Backend Engineer', img: '/profile-pictures/Roxi.jpeg', linkedin: 'https://www.linkedin.com/in/roxana-zaricell-bautista-lopez-651a5526b/', flagCode: 'MX' },
+        { name: 'Vanessa S. Angulo', role: 'Backend Engineer', img: '/profile-pictures/Vane.jpeg', linkedin: 'https://www.linkedin.com/in/vanessaangulose/', flagCode: 'MX' },
+        { name: 'Kevin S. Morales', role: 'Backend Engineer', img: '/profile-pictures/Kevin.jpeg', linkedin: 'https://www.linkedin.com/in/kevin-morales-6431b72a2', flagCode: 'CO' },
     ];
 
     return (
@@ -145,7 +145,11 @@ export function TeamSection() {
                     {team.map((member, idx) => (
                         <Card key={idx} className="group p-6 text-center border-white/5 hover:border-neon-cyan/50 transition-colors">
                             <div className="w-20 h-20 mx-auto rounded-full bg-white/5 mb-6 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-neon-cyan transition-colors relative">
-                                <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
+                                {member.img ? (
+                                    <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Users className="text-gray-500 group-hover:text-neon-cyan" size={28} />
+                                )}
                                 {member.role === 'Pitch Speaker' && (
                                     <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white/10 border border-neon-cyan/40 text-neon-cyan shadow">
                                         <Mic size={12} />
