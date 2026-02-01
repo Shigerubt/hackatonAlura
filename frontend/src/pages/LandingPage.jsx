@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { ArrowRight } from 'lucide-react';
 import logo from '../assets/Churn Alert Shield.png';
-import { OperatingBrainSection, ApiIntegrationSection, RoiSection, TeamSection, CtaSection, InsideTheMachineSection } from './LandingSections';
+import { OperatingBrainSection, ApiIntegrationSection, RoiSection, TeamSection, CtaSection, InsideTheMachineSection } from './LandingSectionsClean';
 
 export default function LandingPage({ onLaunch }) {
     return (
