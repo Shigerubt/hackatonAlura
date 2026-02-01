@@ -7,9 +7,10 @@ import Overview from '../components/dashboard/Overview';
 import SinglePrediction from '../components/dashboard/SinglePrediction';
 import Settings from '../components/dashboard/Settings';
 import { AnimatePresence, motion } from 'framer-motion';
+import ApiPlayground from '../components/dashboard/ApiPlayground';
 
 export default function Dashboard({ onBack, onLogout, user, onProfileUpdate }) {
-    const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'batch' | 'single' | 'settings'
+    const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'batch' | 'single' | 'playground' | 'settings'
     const [viewState, setViewState] = useState('upload'); // 'upload' | 'results'
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [results, setResults] = useState(null);
@@ -131,6 +132,10 @@ export default function Dashboard({ onBack, onLogout, user, onProfileUpdate }) {
 
                             {activeTab === 'single' && (
                                 <SinglePrediction onPredictionSuccess={() => setRefreshKey(prev => prev + 1)} />
+                            )}
+
+                            {activeTab === 'playground' && (
+                                <ApiPlayground />
                             )}
 
                             {activeTab === 'settings' && (

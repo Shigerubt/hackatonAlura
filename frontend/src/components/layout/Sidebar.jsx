@@ -36,6 +36,7 @@ export function Sidebar({ activeTab, setActiveTab, onBack, onLogout, onDataClear
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'batch', label: 'Carga Masiva', icon: UploadCloud },
         { id: 'single', label: 'Predicción Única', icon: FileSearch },
+        { id: 'playground', label: 'API Playground', icon: FileSearch },
         { id: 'settings', label: 'Configuración', icon: Settings },
     ];
 
