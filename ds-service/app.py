@@ -3,7 +3,7 @@ import math
 from typing import Tuple, List, Optional
 
 from flask import Flask, request, jsonify
-from flasgger import Swagger
+from flasgger import Swagger, swag_from
 from flask_swagger_ui import get_swaggerui_blueprint
 
 try:
@@ -355,26 +355,32 @@ def predict_with_model(features: dict) -> Optional[Tuple[str, float, List[str]]]
 
 
 @app.route("/predict", methods=["POST"])
+@swag_from({
+    'tags': ['DS'],
+    'consumes': ['application/json'],
+    'produces': ['application/json'],
+    'parameters': [
+        {
+            'in': 'body',
+            'name': 'payload',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'features': {'type': 'object'}
+                }
+            }
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'OK',
+            'schema': {'type': 'object'}
+        }
+    }
+})
 def predict():
-        """
-        Predict churn
-        ---
-        tags:
-            - DS
-        consumes:
-            - application/json
-        produces:
-            - application/json
-        parameters:
-            - in: body
-                name: body
-                required: true
-                schema:
-                    type: object
-        responses:
-            200:
-                description: OK
-        """
+        """Predict churn"""
         payload = request.get_json(silent=True) or {}
         feats = payload.get("features") or payload
         # Enforce input rules: case-sensitive strings, TotalCharges null->0.0
