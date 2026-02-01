@@ -259,8 +259,8 @@ export default function Overview({ refreshKey }) {
                         </div>
                     </div>
                     <p className="text-sm text-gray-400 leading-relaxed">
-                        El motor de ChurnAlert utiliza un modelo de Random Forest entrenado con el dataset Telco. 
-                        Las predicciones actuales se basan en el análisis de 19 variables de comportamiento y contrato.
+                        El motor de ChurnAlert utiliza un modelo de XGBoost (Gradient Boosting) entrenado con el dataset Telco.
+                        Las predicciones actuales se basan en el análisis de 20 variables canónicas de comportamiento y contrato.
                     </p>
                 </div>
             </div>
