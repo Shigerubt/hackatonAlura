@@ -149,7 +149,7 @@ tab_individual, tab_batch, tab_evaluate, tab_stats = st.tabs(["Predicción indiv
 
 with tab_individual:
     st.subheader("Predicción individual")
-    st.caption("Esquema Telco (19 campos). Valores son sensibles a mayúsculas/minúsculas.")
+    st.caption("Esquema Telco (20 campos canónicos). Valores son sensibles a mayúsculas/minúsculas.")
     with st.form("form_individual"):
         col1, col2, col3 = st.columns(3)
         with col1:
