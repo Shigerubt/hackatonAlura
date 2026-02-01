@@ -4,20 +4,18 @@ import { Button } from '../components/ui/Button';
 import { TrendingUp, Users, Github, Linkedin } from 'lucide-react';
 
 function FlagIcon({ code, size = 16 }) {
-    const w = size;
-    const h = Math.round(size * 0.75);
-    switch (code) {
-        case 'GT':
-            return (
-                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Guatemala flag">
-                    <rect width="1" height="2" x="0" y="0" fill="#4997D0" />
-                    <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
-                    <rect width="1" height="2" x="2" y="0" fill="#4997D0" />
-                </svg>
-            );
-        case 'MX':
-            return (
-                <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Mexico flag">
+  const w = size;
+  const h = Math.round(size * 0.75);
+  switch (code) {
+    case 'GT':
+      return (
+        <svg width={w} height={h} viewBox="0 0 3 2" aria-label="Guatemala flag">
+          <rect width="1" height="2" x="0" y="0" fill="#4997D0" />
+          <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
+          <rect width="1" height="2" x="2" y="0" fill="#4997D0" />
+        </svg>
+      );
+    case 'MX':
                     <rect width="1" height="2" x="0" y="0" fill="#006847" />
                     <rect width="1" height="2" x="1" y="0" fill="#ffffff" />
                     <rect width="1" height="2" x="2" y="0" fill="#CE1126" />
@@ -49,6 +47,12 @@ export function OperatingBrainSection() {
         <section className="py-16 px-6 max-w-7xl mx-auto">
             <div className="text-center">
                 <h2 className="text-3xl font-bold mb-3">Cerebro Operativo</h2>
+    function FlagIcon({ code, size = 16 }) {
+        const style = { fontSize: size, lineHeight: 1 };
+        const map = { GT: '🇬🇹', MX: '🇲🇽', PE: '🇵🇪', CO: '🇨🇴' };
+        const emoji = map[code] || '🏁';
+        return <span style={style} aria-label={`${code} flag`}>{emoji}</span>;
+    }
                 <p className="text-gray-400">Arquitectura desacoplada para predicciones confiables y rápidas.</p>
             </div>
         </section>
